@@ -1,0 +1,41 @@
+{% import "_includes/forms" as forms %}
+
+<fieldset id="abm-checkit-sidebar">
+	<legend class="h6">{{ 'Check it'|t('abm-checkit') }}</legend>
+
+	<div class="meta">
+		{% for sitestatus in checkitSites|slice(0,3) %}
+			{{ forms.lightswitchField({
+				label: sitestatus.name,
+				id: sitestatus.id ~ '_new',
+				name: 'checkitStatus[sites][' ~ sitestatus.id ~ '][new]',
+				on: sitestatus.status
+			}) }}
+			<input type="hidden" name="checkitStatus[sites][{{ sitestatus.id }}][old]" value="{{ sitestatus.status ? '1' : '' }}" />
+		{% endfor %}
+
+		{% if ( checkitSites|length > 3 ) %}
+			<div class="collapse" id="EnabledLanguages">
+				<div class="innerContent">
+					<div class="meta">
+						{% for sitestatus in checkitSites|slice(3) %}
+							
+							<input type="hidden" name="checkitStatus[sites][{{ sitestatus.id }}][old]" value="{{ sitestatus.status ? '1' : '' }}" />
+
+							{{ forms.lightswitchField({
+								label: sitestatus.name,
+								id: sitestatus.id ~ '_new',
+								name: 'checkitStatus[sites][' ~ sitestatus.id ~ '][new]',
+								on: sitestatus.status
+							}) }}
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+			
+			<div class="heading">
+				<button class="expand-abm-checkit-btn btn" data-toggle='collapse' data-target="#EnabledLanguages" type="button" data-icon="ellipsis" aria-expanded="false" aria-lable="Toggle"></button>
+			</div>
+		{% endif %}
+	</div>
+</fieldset>

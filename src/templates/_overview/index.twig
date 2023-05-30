@@ -1,0 +1,46 @@
+{% extends "_layouts/cp" %}
+{% set title = 'Overview' %}
+{% set selectedSubNavItem = 'abm-checkit' %}
+
+{% block content %}
+
+	{% for site in checkitSites %}
+		<h2>{{ site.name }}</h2>
+		<table class="data table">
+			<tr>
+				<th>{{ 'section'|t('abm-checkit') }}</th>
+				<th>{{ 'marked entries'|t('abm-checkit') }}</th>
+				<th>{{ 'entries'|t('abm-checkit') }}</th>
+			</tr>
+
+			{% for section in site.sections %}
+				<tr>
+					<td>{{ section.name }}</td>
+					<td>
+						{% if section.urlOutstanding %}
+							<a href="{{ section.urlOutstanding }}">{{ section.amountOutstanding}}</a>
+						{% else %}
+							{{ section.amountOutstanding}}
+						{% endif %}
+					</td>
+					<td><a href="{{ section.urlElements }}">{{ section.amountElements}}</a></td>
+				</tr>
+			{% endfor %}
+
+			{% for productType in site.productTypes %}
+				<tr>
+					<td>{{ productType.name }}</td>
+					<td>
+						{% if productType.urlOutstanding %}
+							<a href="{{ productType.urlOutstanding }}">{{ productType.amountOutstanding}}</a>
+						{% else %}
+							{{ productType.amountOutstanding}}
+						{% endif %}
+					</td>
+					<td><a href="{{ productType.urlElements }}">{{ productType.amountElements}}</a></td>
+				</tr>
+			{% endfor %}
+		</table>
+		<br />
+	{% endfor %}
+{% endblock %}

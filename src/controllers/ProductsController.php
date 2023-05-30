@@ -1,0 +1,17 @@
+<?php
+namespace abmat\checkit\controllers;
+
+use Craft;
+use craft\web\Controller;
+use craft\web\Response;
+use yii\web\ForbiddenHttpException;
+
+class ProductsController extends Controller {
+	/**
+	 * @throws ForbiddenHttpException
+	 */
+	public function actionIndex (): Response
+	{
+		return $this->renderTemplate('abm-checkit/_products/index', []);
+	}
+}

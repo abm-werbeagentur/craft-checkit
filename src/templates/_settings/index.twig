@@ -1,0 +1,120 @@
+{% extends "_layouts/cp" %}
+{% set title = 'Checkit - Settings' %}
+{% set selectedSubnavItem = 'abm-checkit-settings' %}
+{% set fullPageForm = true %}
+
+{% import "_includes/forms" as forms %}
+
+{% block saveButton %}
+	<input type="submit" class="btn submit" value="{{ 'Save'|t }}">
+{% endblock %}
+
+{% block content %}
+
+	{% namespace namespace %}
+
+	{# Start: Sections #}
+	<div class="field">
+		<div class="heading">
+			<label>Sections</label>
+			<div class="instructions">How should we handle each section?</div>
+		</div>
+	</div>
+
+	<input type="hidden" name="sections" value="">
+
+	<table class="data fullwidth">
+		<thead>
+			<tr>
+				<th>Enabled?</th>
+				<th>Section</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for section in sections %}
+				<tr>
+					<td class="thin" style="text-align:center">
+						<input
+							type="hidden"
+							name="sections[{{ section.id }}]"
+							value=""
+						/>
+						{{ forms.checkbox({
+							name: "sections["~section.id~"][enabled]",
+							value: true,
+							checked: (settings.sections is defined and settings.sections[section.id] is defined ? settings.sections[section.id].enabled : false)
+						}) }}
+					</td>
+
+					<td style="text-align:left;">
+						<input
+							type="hidden"
+							name="sections[{{ section.id }}][id]"
+							value="{{ settings.sections is defined and settings.sections[section.id] is defined ? settings.sections[section.id].id : -1 }}"
+						/>
+						<strong>{{ section.name }}</strong>
+
+						{% for siteSettings in section.getSiteSettings() %}
+							<span class="abm-checkit-tag">{{ siteSettings.site.name }}</span>
+						{% endfor %}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{# End: Sections #}
+
+	<br>
+
+	{# Start: Product Types #}
+	{% if productTypes|length %}
+		<div class="field">
+			<div class="heading">
+				<label>Product Types</label>
+				<div class="instructions">How should we handle each product type?</div>
+			</div>
+		</div>
+
+		<input type="hidden" name="categories" value="">
+
+		<table class="data fullwidth">
+			<thead>
+			<tr>
+				<th>Enabled?</th>
+				<th>Product Type</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for productType in productTypes %}
+				<tr>
+					<td class="thin" style="text-align:center">
+						<input
+							type="hidden"
+							name="productTypes[{{ productType.id }}]"
+							value=""
+						/>
+						{{ forms.checkbox({
+							name: "productTypes["~productType.id~"][enabled]",
+							value: true,
+							checked: (settings.productTypes is defined and settings.productTypes[productType.id] is defined ? settings.productTypes[productType.id].enabled : false)
+						}) }}
+					</td>
+					<td style="text-align:left;">
+						<input
+							type="hidden"
+							name="productTypes[{{ productType.id }}][id]"
+							value="{{ settings.productTypes is defined and settings.productTypes[productType.id] is defined ? settings.productTypes[productType.id].id : -1 }}"
+						/>
+						<strong>{{ productType.name }}</strong>
+					</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+
+		<br>
+	{% endif %}
+	{# End: Product Types #}
+
+	{% endnamespace %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{
+	"name": "abmat/craft-checkit",
+	"description": "Check it",
+	"type": "craft-plugin",
+	"license": "proprietary",
+	"authors": [
+	  {
+		"name": "ABM Feregyhazy & Simon GmbH",
+		"homepage": "https://www.abm.at"
+	  }
+	],
+	"require": {
+	  "craftcms/cms": "^4.0.0"
+	},
+	"autoload": {
+	  "psr-4": {
+		"abmat\\checkit\\": "src/"
+	  }
+	},
+	"extra": {
+	  "name": "Check it",
+	  "handle": "abm-checkit",
+	  "class": "abmat\\checkit\\CheckIt"
+	},
+	"config": {
+		"allow-plugins": {
+			"yiisoft/yii2-composer": true,
+			"craftcms/plugin-installer": true
+		}
+	}
+}
