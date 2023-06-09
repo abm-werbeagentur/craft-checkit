@@ -1,17 +1,25 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit;
 
 use Craft;
-
+use craft\base\Model;
 use craft\base\Plugin;
 use craft\elements\Entry;
+use craft\events\DeleteElementEvent;
 use craft\events\InvalidateElementCachesEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\events\RegisterUserPermissionsEvent;
-use craft\events\DeleteElementEvent;
+use craft\helpers\UrlHelper;
 use craft\services\Dashboard;
 use craft\services\Elements;
+use craft\services\Sections;
+use craft\services\Sites;
 use craft\services\UserPermissions;
 use craft\web\UrlManager;
 use craft\web\Application;
@@ -21,6 +29,7 @@ use craft\commerce\elements\Product;
 use abmat\checkit\base\PluginTrait;
 use abmat\checkit\elements\Entry as PluginEntry;
 use abmat\checkit\elements\Product as PluginProduct;
+use abmat\checkit\models\Settings;
 use abmat\checkit\widgets\OverviewSite;
 
 use yii\base\Event;
@@ -28,7 +37,15 @@ use yii\caching\TagDependency;
 
 class CheckIt extends Plugin {
 
+    /**
+     * @inheritdoc
+     */
     public bool $hasCpSection = true;
+
+    /**
+     * @inheritdoc
+     */
+    public bool $hasCpSettings = true;
 
     public string $schemaVersion = '1.0.0';
 
@@ -69,6 +86,14 @@ class CheckIt extends Plugin {
         }
 	}
 
+    /**
+     * @inheritdoc
+     */
+    public function getSettingsResponse(): mixed
+    {
+        return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('abm-checkit/settings/section'));
+    }
+
     public function getCpNavItem (): ?array
 	{        
         $item = parent::getCpNavItem();
@@ -97,7 +122,7 @@ class CheckIt extends Plugin {
 
         if ($currentUser->checkPermission('abm-checkit-settings')) {
             $subNav['abm-checkit-settings'] = [
-                'label' => Craft::t('abm-checkit', 'Settings'),
+                'label' => Craft::t('app', 'Settings'),
                 'url' => 'abm-checkit/settings',
             ];
         }
@@ -115,9 +140,22 @@ class CheckIt extends Plugin {
         return $item;
 	}
 
+    /**
+     * @inheritdoc
+     */
+    protected function createSettingsModel(): ?Model
+    {
+        return new Settings();
+    }
+
 	private function _registerCraftEventListeners(): void
     {
-        Event::on(Elements::class, Elements::EVENT_AFTER_DELETE_ELEMENT, [$this->getEntries(), 'deleteTrashedEntries']);
+        Event::on(Sections::class, Sections::EVENT_AFTER_DELETE_SECTION, [$this->getSections(), 'afterDeleteSection']);
+        Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_SECTION, [$this->getSections(), "afterSaveSection"]);
+
+        Event::on(Sites::class, Sites::EVENT_AFTER_DELETE_SITE, [$this->getEntries(), "afterDeleteSite"]);
+
+        Event::on(Elements::class, Elements::EVENT_AFTER_DELETE_ELEMENT, [$this->getEntries(), 'afterDeleteElement']);
 
         Event::on(Elements::class, Elements::EVENT_INVALIDATE_CACHES, function(InvalidateElementCachesEvent $event) {
 
@@ -188,8 +226,9 @@ class CheckIt extends Plugin {
             $event->rules['abm-checkit/entries'] = 'abm-checkit/entries/index';
             $event->rules['abm-checkit/products'] = 'abm-checkit/products/index';
 
-            $event->rules['POST abm-checkit/settings'] = 'abm-checkit/settings/save';
-            $event->rules['abm-checkit/settings'] = 'abm-checkit/settings/index';
+            $event->rules['POST abm-checkit/settings/section'] = 'abm-checkit/settings/save-section';
+            $event->rules['abm-checkit/settings/section'] = 'abm-checkit/settings/section';
+            $event->rules['abm-checkit/settings/position'] = 'abm-checkit/settings/position';
         });
 	}
 
@@ -198,7 +237,7 @@ class CheckIt extends Plugin {
         Event::on(UserPermissions::class, UserPermissions::EVENT_REGISTER_PERMISSIONS, function(RegisterUserPermissionsEvent $event): void {
 
             $permissions = [
-                'abm-checkit-settings' => ['label' => Craft::t('abm-checkit', 'Settings')],
+                'abm-checkit-settings' => ['label' => Craft::t('app', 'Settings')],
                 'abm-checkit-save-status' => ['label' => Craft::t('abm-checkit', 'save status')],
             ];
 

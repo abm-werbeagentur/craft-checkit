@@ -1,0 +1,43 @@
+{% extends "abm-checkit/_layouts/settings" %}
+{% set selectedSubnavItem = 'abm-checkit-settings' %}
+{% set fullPageForm = false %}
+
+{% import "_includes/forms" as forms %}
+
+{% block saveButton %}
+	<input type="submit" class="btn submit" value="{{ 'Save'|t }}">
+{% endblock %}
+
+{% block content %}
+
+	 {% if not craft.app.config.general.allowAdminChanges %}
+	 	{{ "General config {configvar} is set to false."|t('abm-checkit',{
+			"configvar": "craft.app.config.general.allowAdminChanges"
+		})}}
+		<br />
+		{{ "To set the position, you have to enable this config"|t('abm-checkit')}}
+	 {% else %}
+
+		<form action="" method="post" accept-charset="UTF-8" data-saveshortcut>
+			<input type="hidden" name="action" value="abm-checkit/settings/save-settings">
+			{{ redirectInput('abm-checkit/settings/position') }}
+			{{ csrfInput() }}
+
+			{{ forms.selectField({
+				label: "Position in edit entries"|t('abm-checkit'),
+				name: 'settings[positionInEntries]',
+				value: settings.positionInEntries,
+				options: settings.getPossiblePositions()
+			}) }}
+
+			{{ forms.selectField({
+				label: "Position in edit commerce products"|t('abm-checkit'),
+				name: 'settings[positionInCommmerceProducts]',
+				value: settings.positionInCommmerceProducts,
+				options: settings.getPossiblePositions()
+			}) }}
+
+			<input type="submit" class="btn submit" value="{{ 'Save'|t('app') }}">
+		</form>
+	{% endif %}
+{% endblock %}

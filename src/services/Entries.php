@@ -1,4 +1,9 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\services;
 
 use Craft;
@@ -8,7 +13,9 @@ use craft\models\Site;
 use craft\models\Section;
 use craft\db\Query;
 use craft\elements\Entry;
+use craft\events\DeleteSiteEvent;
 use craft\events\ElementEvent;
+use craft\events\SectionEvent;
 use craft\helpers\Db;
 use craft\helpers\UrlHelper;
 
@@ -48,7 +55,7 @@ class Entries extends Component
 		}
 
 		$sectionsWithPermissions = [];
-		$enabledSections = Plugin::$plugin->getSettings()->getAllEnabledSections();
+		$enabledSections = Plugin::$plugin->getSections()->getAllEnabledSections();
 
 		foreach(array_keys($enabledSections) as $sectionId) {
 			$section = Craft::$app->sections->getSectionById($sectionId);
@@ -81,7 +88,7 @@ class Entries extends Component
 
 		$pluginsService = Craft::$app->getPlugins();
 		if ($pluginsService->isPluginInstalled('commerce') && $pluginsService->isPluginEnabled('commerce')) {
-			$enabledProductTypes = Plugin::$plugin->getSettings()->getAllEnabledProductTypes();
+			$enabledProductTypes = Plugin::$plugin->getSections()->getAllEnabledProductTypes();
 
 			foreach(array_keys($enabledProductTypes) as $productTypeId) {
 
@@ -220,21 +227,31 @@ class Entries extends Component
 		return $queryProducts->count();
 	}
 
-	public function deleteTrashedEntries(ElementEvent|null $event = null): void
+	public function afterDeleteSection(SectionEvent $event): void
 	{
-		if(!is_null($event)) {
-			if (!(
-				$event->element instanceof Entry || 
-				$event->element instanceof CommerceProduct
-			)) {
-				return;
-			}
 
-			if($event->element->hardDelete) {
-				Craft::$app->db->createCommand()->delete('abm_checkit_entries','entryId = :entryId',['entryId' => $event->element->id]);
-			}
+
+		$this->deleteTrashedEntries();
+	}
+
+	public function afterDeleteElement(ElementEvent $event): void
+	{
+		if (!(
+			$event->element instanceof Entry || 
+			$event->element instanceof CommerceProduct
+		)) {
+			return;
 		}
 
+		if($event->element->hardDelete) {
+			Craft::$app->db->createCommand()->delete('abm_checkit_entries','entryId = :entryId',['entryId' => $event->element->id]);
+		}
+
+		$this->deleteTrashedEntries();
+	}
+
+	public function deleteTrashedEntries(): void
+	{
 		Craft::$app->db->createCommand('delete abm_checkit_entries.* 
 			FROM `abm_checkit_entries` 
 			left join entries 
@@ -311,7 +328,7 @@ class Entries extends Component
 		$editableSections = Craft::$app->sections->getEditableSections();
 
 		if(!empty($editableSections)) {
-			$enabledSections = Plugin::$plugin->getSettings()->getAllEnabledSections();
+			$enabledSections = Plugin::$plugin->getSections()->getAllEnabledSections();
 
 			foreach($editableSections as $section) {
 			
@@ -349,7 +366,7 @@ class Entries extends Component
 			$editableProductTypes = CommercePlugin::getInstance()->getProductTypes()->getEditableProductTypes();
 
 			if(!empty($editableProductTypes)) {
-				$enabledProductTypes = Plugin::$plugin->getSettings()->getAllEnabledProductTypes();
+				$enabledProductTypes = Plugin::$plugin->getSections()->getAllEnabledProductTypes();
 
 				foreach($editableProductTypes as $productType) {
 				
@@ -419,5 +436,46 @@ class Entries extends Component
 		}
 
 		return $siteList;
+	}
+
+	public function deleteEntriesForSection($section_id):void {
+		$deleteEntries = Craft::$app->db->createCommand('delete ' . EntryRecord::$tableName . '.* from ' . EntryRecord::$tableName . ' 
+			join entries on 
+				abm_checkit_entries.entryId = entries.id
+				and abm_checkit_entries.groupType = \'sections\'
+				and entries.sectionId = :groupId');
+		$deleteEntries->bindParam(':groupId', $section_id);
+		$deleteEntries->execute();
+	}
+
+	public function deleteEntriesForSectionAndSite($section_id, $site_id):void {
+		$deleteEntries = Craft::$app->db->createCommand('delete ' . EntryRecord::$tableName . '.* from ' . EntryRecord::$tableName . ' 
+			join entries on 
+				abm_checkit_entries.entryId = entries.id
+				and abm_checkit_entries.groupType = \'sections\'
+				and abm_checkit_entries.siteId = :siteId
+				and entries.sectionId = :groupId');
+		$deleteEntries->bindParam(':groupId', $section_id);
+		$deleteEntries->bindParam(':siteId', $site_id);
+		$deleteEntries->execute();
+	}
+
+	public function afterDeleteSite(DeleteSiteEvent $event) :void
+	{
+		$deleteEntries = Craft::$app->db->createCommand('delete from ' . EntryRecord::$tableName . ' 
+			where abm_checkit_entries.siteId = :siteId');
+		$deleteEntries->bindParam(':siteId', $event->site->id);
+		$deleteEntries->execute();
+	}
+
+	public function deleteEntriesForProductType($productType_id):void
+	{
+		$deleteProducts = Craft::$app->db->createCommand('delete ' . EntryRecord::$tableName . '.* from ' . EntryRecord::$tableName . ' 
+			join commerce_products on 
+				' . EntryRecord::$tableName . '.entryId = commerce_products.id
+				and abm_checkit_entries.groupType = \'productTypes\'
+				and commerce_products.typeId = :groupId');
+		$deleteProducts->bindParam(':groupId', $productType_id);
+		$deleteProducts->execute();
 	}
 }

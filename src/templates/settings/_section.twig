@@ -1,5 +1,4 @@
-{% extends "_layouts/cp" %}
-{% set title = 'Checkit - Settings' %}
+{% extends "abm-checkit/_layouts/settings" %}
 {% set selectedSubnavItem = 'abm-checkit-settings' %}
 {% set fullPageForm = true %}
 
@@ -16,8 +15,8 @@
 	{# Start: Sections #}
 	<div class="field">
 		<div class="heading">
-			<label>Sections</label>
-			<div class="instructions">How should we handle each section?</div>
+			<label>{{ 'Sections'|t('app') }}</label>
+			<div class="instructions">{{ 'Enable CheckIt for sections.'|t('abm-checkit') }}</div>
 		</div>
 	</div>
 
@@ -26,8 +25,8 @@
 	<table class="data fullwidth">
 		<thead>
 			<tr>
-				<th>Enabled?</th>
-				<th>Section</th>
+				<th>{{ 'Enabled?'|t('abm-checkit') }}</th>
+				<th>{{ 'Section'|t('app') }}</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -53,10 +52,6 @@
 							value="{{ settings.sections is defined and settings.sections[section.id] is defined ? settings.sections[section.id].id : -1 }}"
 						/>
 						<strong>{{ section.name }}</strong>
-
-						{% for siteSettings in section.getSiteSettings() %}
-							<span class="abm-checkit-tag">{{ siteSettings.site.name }}</span>
-						{% endfor %}
 					</td>
 				</tr>
 			{% endfor %}
@@ -70,8 +65,8 @@
 	{% if productTypes|length %}
 		<div class="field">
 			<div class="heading">
-				<label>Product Types</label>
-				<div class="instructions">How should we handle each product type?</div>
+				<label>{{ 'Product Types'|t('commerce') }}</label>
+				<div class="instructions">{{ 'Enable CheckIt for product types.'|t('abm-checkit') }}</div>
 			</div>
 		</div>
 
@@ -80,8 +75,8 @@
 		<table class="data fullwidth">
 			<thead>
 			<tr>
-				<th>Enabled?</th>
-				<th>Product Type</th>
+				<th>{{ 'Enabled?'|t('abm-checkit') }}</th>
+				<th>{{ 'Product Types'|t('commerce') }}</th>
 			</tr>
 			</thead>
 			<tbody>

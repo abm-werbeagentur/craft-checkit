@@ -9,13 +9,13 @@ namespace abmat\checkit\records;
 use craft\db\ActiveRecord;
 
 /**
- * Class EntryRecord
+ * Class SectionRecord
  *
  * @package abmat\checkit\records
  */
-class EntryRecord extends ActiveRecord
+class SectionRecord extends ActiveRecord
 {
-	public static $tableName = '{{%abm_checkit_entries}}';
+	public static $tableName = '{{%abm_checkit_sections}}';
 
 	public static function tableName ()
 	{

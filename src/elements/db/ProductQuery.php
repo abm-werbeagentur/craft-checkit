@@ -1,4 +1,9 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\elements\db;
 
 use craft\commerce\elements\db\ProductQuery as CommerceProductQuery;

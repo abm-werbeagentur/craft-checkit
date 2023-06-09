@@ -1,4 +1,9 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\elements;
 
 use Craft;
@@ -61,7 +66,7 @@ class Entry extends CraftEntry
 
 		$sections = Craft::$app->getSections()->getEditableSections();
 
-		$enabledSections = CheckIt::$plugin->getSettings()->getAllEnabledSections();
+		$enabledSections = CheckIt::$plugin->getSections()->getAllEnabledSections();
 		
         foreach ($sections as $section) {
 

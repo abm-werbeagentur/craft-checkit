@@ -1,10 +1,15 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\base;
 
 use Craft;
 use abmat\checkit\CheckIt as Plugin;
 use abmat\checkit\services\Sidebar;
-use abmat\checkit\services\Settings;
+use abmat\checkit\services\Sections;
 use abmat\checkit\services\Entries;
 
 use yii\log\Logger;
@@ -37,9 +42,9 @@ trait PluginTrait
 		return $this->get('sidebar');
 	}
 
-	public function getSettings(): Settings
+	public function getSections(): Sections
 	{
-		return $this->get('settings');
+		return $this->get('sections');
 	}
 
 	public function getEntries(): Entries
@@ -54,7 +59,7 @@ trait PluginTrait
 	{
 		$this->setComponents([
             'sidebar' => Sidebar::class,
-            'settings' => Settings::class,
+            'sections' => Sections::class,
             'entries' => Entries::class,
         ]);
 	}

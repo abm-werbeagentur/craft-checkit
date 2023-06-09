@@ -1,0 +1,35 @@
+{% extends "abm-checkit/_layouts/cp" %}
+{% set selectedSubnavItem = 'abm-checkit-settings' %}
+{% set bodyClass = (bodyClass is defined ? bodyClass~' ' : '') ~ "abm-checkit-settings" %}
+
+{% set title = "Settings"|t('app') %}
+
+{% requirePermission 'abm-checkit-settings' %}
+
+{% set navItems = {} %}
+
+{% if currentUser.admin %}
+{% set navItems = {
+    'section': { 'title': "Sections"|t('app') },
+    'position': { 'title': "Position in sidebar"|t('abm-checkit') },
+} %}
+{% endif %}
+
+{% if selectedItem is not defined %}
+    {% set selectedItem = craft.app.request.getSegment(3) %}
+{% endif %}
+
+{% set docTitle = navItems[selectedItem].title~' - '~title %}
+
+{% block sidebar %}
+    <nav>
+        <ul>
+            {% for handle, item in navItems %}
+                <li>
+                    <a href="{{ url('abm-checkit/settings/'~handle) }}"{% if handle == selectedItem %} class="sel"{% endif %}>{{ item.title }}</a>
+                </li>                
+            {% endfor %}
+        </ul>
+    </nav>
+{% endblock %}
+

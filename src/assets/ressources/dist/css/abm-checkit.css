@@ -6,9 +6,19 @@
 	padding: 14px 0px;
 }
 
-#abm-checkit-sidebar .collapse {
+#abm-checkit-overview *[data-toggle='collapse'] {
+	cursor: pointer;
+}
+
+#abm-checkit-sidebar .collapse,
+#abm-checkit-overview .collapse {
 	height: 0;
 	overflow-y: hidden;
+}
+
+#abm-checkit-sidebar .collapse.in,
+#abm-checkit-overview .collapse.in {
+	height: auto;
 }
 
 #abm-checkit-sidebar #EnabledLanguages   {
@@ -23,10 +33,6 @@
 	padding-right: 0px;
 	margin-left: 0px;
 	margin-right: 0px;
-}
-
-#abm-checkit-sidebar .collapse.in {
-	height: auto;
 }
 
 #abm-checkit-sidebar .btn.expand-checkit-btn {

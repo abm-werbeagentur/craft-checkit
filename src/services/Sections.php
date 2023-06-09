@@ -1,15 +1,21 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\services;
 
 use Craft;
 use craft\base\Component;
+use craft\events\SectionEvent;
 use craft\db\Query;
 
 use abmat\checkit\CheckIt;
-use abmat\checkit\records\SettingRecord;
+use abmat\checkit\records\SectionRecord;
 use abmat\checkit\records\EntryRecord;
 
-class Settings extends Component {
+class Sections extends Component {
 
 	private $_enabledSections = null;
 	private $_enabledProductTypes = null;
@@ -30,7 +36,7 @@ class Settings extends Component {
 
 		$enabledSections = [];
 
-		$settingsRaw = SettingRecord::find()->where([
+		$settingsRaw = SectionRecord::find()->where([
 			"groupType" => "sections",
 			"enabled" => 1,
 		])->all();
@@ -52,7 +58,7 @@ class Settings extends Component {
 
 		$enabledProductTypes = [];
 
-		$settingsRaw = SettingRecord::find()->where([
+		$settingsRaw = SectionRecord::find()->where([
 			"groupType" => "productTypes",
 			"enabled" => 1,
 		])->all();
@@ -89,7 +95,7 @@ class Settings extends Component {
 			}
 		}
 
-		$settingRaw = SettingRecord::find()->where([
+		$settingRaw = SectionRecord::find()->where([
 			"groupType" => $groupType,
 			"groupId" => $groupId
 		])->one();
@@ -101,12 +107,12 @@ class Settings extends Component {
 		return false;
 	}
 
-	public function getSettings ()
+	public function getSections ()
 	{
-		$settingRaw = SettingRecord::find()->all();
+		$settingRaw = SectionRecord::find()->all();
 		$settings = [];
 
-		/** @var SettingRecord $row */
+		/** @var SectionRecord $row */
 		foreach ($settingRaw as $row)
 		{
 			if (!array_key_exists($row->groupType, $settings))
@@ -118,9 +124,9 @@ class Settings extends Component {
 		return $settings;
 	}
 
-	public function saveSettings ($data)
+	public function saveSections ($data)
 	{
-		$oldSettings = $this->getSettings();
+		$oldSettings = $this->getSections();
 		$newSettings = $data;
 
 		// Delete removed rows
@@ -169,7 +175,7 @@ class Settings extends Component {
 
 		if (!empty($idsToDelete))
 		{
-			$settingRows = (new Query())->from([SettingRecord::$tableName])->where(
+			$settingRows = (new Query())->from([SectionRecord::$tableName])->where(
 				['in','id', $idsToDelete],
 			)->all();
 
@@ -177,30 +183,18 @@ class Settings extends Component {
 
 				switch($setting_row["groupType"]) {
 					case "sections":
-						$deleteEntries = Craft::$app->db->createCommand('delete ' . EntryRecord::$tableName . '.* from ' . EntryRecord::$tableName . ' 
-							join entries on 
-								abm_checkit_entries.entryId = entries.id
-								and groupType = \'sections\'
-								and entries.sectionId = :groupId');
-						$deleteEntries->bindParam(':groupId', $setting_row["groupId"]);
-						$deleteEntries->execute();
+						Checkit::$plugin->getEntries()->deleteEntriesForSection($setting_row["groupId"]);
 						break;
 
 					case "productTypes":
-						$deleteProducts = Craft::$app->db->createCommand('delete ' . EntryRecord::$tableName . '.* from ' . EntryRecord::$tableName . ' 
-							join commerce_products on 
-								' . EntryRecord::$tableName . '.entryId = commerce_products.id
-								and groupType = \'productTypes\'
-								and commerce_products.typeId = :groupId');
-						$deleteProducts->bindParam(':groupId', $setting_row["groupId"]);
-						$deleteProducts->execute();
+						Checkit::$plugin->getEntries()->deleteEntriesForProductType($setting_row["groupId"]);
 						break;
 				}
 			}
 
 			try {
 				Craft::$app->db->createCommand()->delete(
-					SettingRecord::$tableName,
+					SectionRecord::$tableName,
 					['in', 'id', $idsToDelete]
 				)->execute();
 
@@ -228,24 +222,11 @@ class Settings extends Component {
 
 					switch($new["groupType"]) {
 						case "sections":
-
-							$deleteEntries = Craft::$app->db->createCommand('delete ' . EntryRecord::$tableName . '.* from ' . EntryRecord::$tableName . ' 
-								join entries on 
-									abm_checkit_entries.entryId = entries.id
-									and groupType = \'sections\'
-									and entries.sectionId = :groupId');
-							$deleteEntries->bindParam(':groupId', $new["groupId"]);
-							$deleteEntries->execute();
+							Checkit::$plugin->getEntries()->deleteEntriesForSection($new["groupId"]);
 							break;
 
 						case "productTypes":
-							$deleteProducts = Craft::$app->db->createCommand('delete ' . EntryRecord::$tableName . '.* from ' . EntryRecord::$tableName . ' 
-								join commerce_products on 
-									' . EntryRecord::$tableName . '.entryId = commerce_products.id
-									and groupType = \'productTypes\'
-									and commerce_products.typeId = :groupId');
-							$deleteProducts->bindParam(':groupId', $new["groupId"]);
-							$deleteProducts->execute();
+							Checkit::$plugin->getEntries()->deleteEntriesForProductType($new["groupId"]);
 							break;
 
 						default:
@@ -259,7 +240,7 @@ class Settings extends Component {
 		// ---------------------------------------------------------------------
 		foreach ($newRecordsRaw as $new)
 		{
-			$record = new SettingRecord();
+			$record = new SectionRecord();
 			$record->setAttribute('groupType', $new['groupType']);
 			$record->setAttribute('groupId', $new['groupId']);
 			$record->setAttribute('enabled', !!$new['enabled']);
@@ -267,6 +248,38 @@ class Settings extends Component {
 		}
 
 		return true;
+	}
+
+	public function afterDeleteSection(SectionEvent $event) :void
+	{
+		Craft::$app->db->createCommand()->delete(
+			SectionRecord::$tableName,
+			['id' => $event->section->id]
+		)->execute();
+
+		Checkit::$plugin->getEntries()->deleteEntriesForSection($event->section->id);
+	}
+
+	public function afterSaveSection(SectionEvent $event) :void
+	{
+		if($event->isNew) {
+			return;
+		}
+
+		if(!array_key_exists($event->section->id,$this->getAllEnabledSections())) {
+			return;
+		}
+
+		$enabledSitesForSection = [];
+		foreach($event->section->getSiteSettings() as $sitesetting) {
+			$enabledSitesForSection[] = $sitesetting->siteId;
+		}
+
+		foreach(Craft::$app->sites->getAllSiteIds(true) as $siteid) {
+			if(!in_array($siteid,$enabledSitesForSection)) {
+				Checkit::$plugin->getEntries()->deleteEntriesForSectionAndSite($event->section->id,$siteid);
+			}
+		}
 	}
 
 	/**
@@ -277,5 +290,5 @@ class Settings extends Component {
 	private function _hasMultiSiteEntries($thing): bool
 	{
 		return $thing->getHasMultiSiteEntries();
-	} 
+	}
 }

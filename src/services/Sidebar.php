@@ -1,4 +1,9 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\services;
 
 use Craft;
@@ -17,6 +22,8 @@ use craft\commerce\Plugin as CommercePlugin;
 use abmat\checkit\CheckIt as Plugin;
 use abmat\checkit\assets\CPAssets;
 
+use yii\base\InvalidConfigException;
+
 class Sidebar extends Component
 {
 	public bool $afterSaveRun = false;
@@ -29,7 +36,7 @@ class Sidebar extends Component
 			return;
         }
 
-		if(Plugin::$plugin->getSettings()->isInSectionEnabled("sections",$entry->sectionId)) {
+		if(Plugin::$plugin->getSections()->isInSectionEnabled("sections",$entry->sectionId)) {
 			$currentSection = $entry->section;
 
 			if($currentSection && $currentSection->getHasMultiSiteEntries()) {
@@ -47,7 +54,16 @@ class Sidebar extends Component
 				
 					foreach($siteSettings as $siteSetting) {
 
-						if($siteSetting->site->id != $site->id) {
+						$setting_site_id = null;
+
+						try {
+
+							$setting_site_id = $siteSetting->site->id;
+						} catch(InvalidConfigException $e) {
+							continue;
+						}
+
+						if($setting_site_id === null || $siteSetting->site->id != $site->id) {
 							continue;
 						}
 
@@ -69,6 +85,13 @@ class Sidebar extends Component
 					}
 				}
 
+				$settings = Plugin::getInstance()->getSettings();
+
+				$template_vars["checkitPosition"] = 0;
+				if(isset($settings["positionInEntries"]) && is_numeric($settings["positionInEntries"])) {
+					$template_vars["checkitPosition"] = $settings["positionInEntries"];
+				}
+
 				$event->html .= $this->_renderEntrySidebarPanel('sidebar',$template_vars);
 			}
 		}
@@ -77,7 +100,7 @@ class Sidebar extends Component
 
 	public function hookCommerceProductEditDetails(array &$context): ?string
 	{
-		if(Plugin::$plugin->getSettings()->isInSectionEnabled("productTypes",$context["productType"]->id)) {
+		if(Plugin::$plugin->getSections()->isInSectionEnabled("productTypes",$context["productType"]->id)) {
 			$currentUser = Craft::$app->getUser();
 			$template_vars = ["checkitSites" => []];
 
@@ -94,7 +117,16 @@ class Sidebar extends Component
 						continue;
 					}
 
-					if($siteSetting->site->id != $site->id) {
+					$setting_site_id = null;
+
+					try {
+
+						$setting_site_id = $siteSetting->site->id;
+					} catch(InvalidConfigException $e) {
+						continue;
+					}
+
+					if($setting_site_id === null || $siteSetting->site->id != $site->id) {
 						continue;
 					}
 
@@ -106,6 +138,13 @@ class Sidebar extends Component
 
 					$template_vars["checkitSites"][] = $template_site;
 				}
+			}
+
+			$settings = Plugin::getInstance()->getSettings();
+
+			$template_vars["checkitPosition"] = 0;
+			if(isset($settings["positionInCommmerceProducts"]) && is_numeric($settings["positionInCommmerceProducts"])) {
+				$template_vars["checkitPosition"] = $settings["positionInCommmerceProducts"];
 			}
 
 			return $this->_renderEntrySidebarPanel('sidebar',$template_vars);

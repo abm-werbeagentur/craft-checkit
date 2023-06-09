@@ -1,46 +1,54 @@
 {% extends "_layouts/cp" %}
-{% set title = 'Overview' %}
+{% set title = 'Overview'|t('abm-checkit') %}
 {% set selectedSubNavItem = 'abm-checkit' %}
 
 {% block content %}
 
-	{% for site in checkitSites %}
-		<h2>{{ site.name }}</h2>
-		<table class="data table">
-			<tr>
-				<th>{{ 'section'|t('abm-checkit') }}</th>
-				<th>{{ 'marked entries'|t('abm-checkit') }}</th>
-				<th>{{ 'entries'|t('abm-checkit') }}</th>
-			</tr>
+	<div id="abm-checkit-overview">
 
-			{% for section in site.sections %}
-				<tr>
-					<td>{{ section.name }}</td>
-					<td>
-						{% if section.urlOutstanding %}
-							<a href="{{ section.urlOutstanding }}">{{ section.amountOutstanding}}</a>
-						{% else %}
-							{{ section.amountOutstanding}}
-						{% endif %}
-					</td>
-					<td><a href="{{ section.urlElements }}">{{ section.amountElements}}</a></td>
-				</tr>
-			{% endfor %}
+		{% for site in checkitSites %}
+			<h2 data-toggle='collapse' data-target="#SiteTable{{ site.id }}">{{ site.name }}</h2>
 
-			{% for productType in site.productTypes %}
-				<tr>
-					<td>{{ productType.name }}</td>
-					<td>
-						{% if productType.urlOutstanding %}
-							<a href="{{ productType.urlOutstanding }}">{{ productType.amountOutstanding}}</a>
-						{% else %}
-							{{ productType.amountOutstanding}}
-						{% endif %}
-					</td>
-					<td><a href="{{ productType.urlElements }}">{{ productType.amountElements}}</a></td>
-				</tr>
-			{% endfor %}
-		</table>
-		<br />
-	{% endfor %}
+			<div class="collapse{{ not loop.index0?' in'}}" id="SiteTable{{ site.id }}">
+				<table class="data table">
+					<tr>
+						<th>{{ 'Section'|t('app') }}</th>
+						<th>{{ 'Marked {entries}'|t('abm-checkit',{
+							'entries': 'Entries'|t('app')
+						}) }}</th>
+						<th>{{ 'Entries'|t('app') }}</th>
+					</tr>
+
+					{% for section in site.sections %}
+						<tr>
+							<td>{{ section.name }}</td>
+							<td>
+								{% if section.urlOutstanding %}
+									<a href="{{ section.urlOutstanding }}">{{ section.amountOutstanding}}</a>
+								{% else %}
+									{{ section.amountOutstanding}}
+								{% endif %}
+							</td>
+							<td><a href="{{ section.urlElements }}">{{ section.amountElements}}</a></td>
+						</tr>
+					{% endfor %}
+
+					{% for productType in site.productTypes %}
+						<tr>
+							<td>{{ productType.name }}</td>
+							<td>
+								{% if productType.urlOutstanding %}
+									<a href="{{ productType.urlOutstanding }}">{{ productType.amountOutstanding}}</a>
+								{% else %}
+									{{ productType.amountOutstanding}}
+								{% endif %}
+							</td>
+							<td><a href="{{ productType.urlElements }}">{{ productType.amountElements}}</a></td>
+						</tr>
+					{% endfor %}
+				</table>
+			</div>
+			<br />
+		{% endfor %}
+	</div>
 {% endblock %}

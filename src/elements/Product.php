@@ -1,4 +1,9 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\elements;
 
 use Craft;
@@ -30,7 +35,7 @@ class Product extends CommerceProduct {
     {
         $productTypes = \craft\commerce\Plugin::getInstance()->getProductTypes()->getEditableProductTypes();
 
-		$enabledProductTypes = CheckIt::$plugin->getSettings()->getAllEnabledProductTypes();
+		$enabledProductTypes = CheckIt::$plugin->getSections()->getAllEnabledProductTypes();
 
         $productTypeIds = [];
 

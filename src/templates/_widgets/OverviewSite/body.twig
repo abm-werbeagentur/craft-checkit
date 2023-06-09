@@ -1,8 +1,10 @@
 <table class="data table">
 	<tr>
-		<th>{{ 'section'|t('abm-checkit') }}</th>
-		<th>{{ 'marked entries'|t('abm-checkit') }}</th>
-		<th>{{ 'entries'|t('abm-checkit') }}</th>
+		<th>{{ 'Section'|t('app') }}</th>
+		<th>{{ 'Marked {entries}'|t('abm-checkit',{
+			'entries': 'Entries'|t('app')
+		}) }}</th>
+		<th>{{ 'Entries'|t('app') }}</th>
 	</tr>
 
 	{% for section in sitelist.sections %}

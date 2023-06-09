@@ -1,4 +1,9 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\controllers;
 
 use Craft;
@@ -15,10 +20,11 @@ use abmat\checkit\CheckIt;
 use abmat\checkit\assets\CPAssets;
 
 class SettingsController extends Controller {
+
 	/**
-	 * @throws HttpException
+	 * @throws ForbiddenHttpException
 	 */
-	public function actionIndex (): Response
+	public function actionSection (): Response
 	{
 		$currentUser = Craft::$app->user;
 		if (!$currentUser->checkPermission('abm-checkit-settings')) {
@@ -31,11 +37,11 @@ class SettingsController extends Controller {
 
 		CheckIt::$plugin->getEntries()->deleteTrashedEntries();
 
-		$sections = CheckIt::$plugin->getSettings()->getValidSections();
-		$productTypes = CheckIt::$plugin->getSettings()->getValidProductTypes();
-		$settings = CheckIt::$plugin->getSettings()->getSettings();
+		$sections = CheckIt::$plugin->getSections()->getValidSections();
+		$productTypes = CheckIt::$plugin->getSections()->getValidProductTypes();
+		$settings = CheckIt::$plugin->getSections()->getSections();
 		
-		return $this->renderTemplate('abm-checkit/_settings/index', [
+		return $this->renderTemplate('abm-checkit/settings/_section', [
 			'namespace' => $namespace,
 			"sections" => $sections,
 			"productTypes" => $productTypes,
@@ -44,9 +50,31 @@ class SettingsController extends Controller {
 	}
 
 	/**
+	 * @throws ForbiddenHttpException
+	 */
+	public function actionPosition (): Response
+	{
+		$currentUser = Craft::$app->user;
+		if (!$currentUser->checkPermission('abm-checkit-settings')) {
+			throw new ForbiddenHttpException('User not permitted to view this site');
+		}
+
+		$settings = CheckIt::getInstance()->getSettings();
+
+		$namespace = 'data';
+
+		$this->view->registerAssetBundle(CPAssets::class);
+		
+		return $this->renderTemplate('abm-checkit/settings/_position', [
+			'namespace' => $namespace,
+			'settings' => $settings,
+        ]);
+	}
+
+	/**
 	 * @throws \yii\web\BadRequestHttpException
 	 */
-	public function actionSave ()
+	public function actionSaveSection ()
 	{
 		$this->requirePostRequest();
 		$craft = \Craft::$app;
@@ -58,20 +86,46 @@ class SettingsController extends Controller {
 
 		$data = $craft->request->getRequiredBodyParam('data');
 
-		if (CheckIt::$plugin->getSettings()->saveSettings($data))
+		if (CheckIt::$plugin->getSections()->saveSections($data))
 		{
 			$craft->session->setNotice(
-				\Craft::t('abm-checkit', 'Settings Updated')
+				\Craft::t('abm-checkit', 'Section settings updated')
 			);
 		}
 		else
 		{
 			$craft->session->setNotice(
-				\Craft::t('abm-checkit', 'Couldn\'t save settings')
+				\Craft::t('abm-checkit', 'Couldn\'t save section settings')
 			);
 		}
 
-
 		$this->redirectToPostedUrl();
+	}
+
+	/**
+     * @throws InvalidConfigException
+     * @throws BadRequestHttpException
+     */
+    public function actionSaveSettings(): ?Response
+    {
+		$this->requirePostRequest();
+
+        $params = $this->request->getBodyParams();
+        $data = $params['settings'];
+
+        $settings = CheckIt::getInstance()->getSettings();
+        $settings->positionInEntries = $data['positionInEntries'] ?? key($settings->getPossiblePositions());
+		$settings->positionInCommmerceProducts = $data['positionInCommmerceProducts'] ?? key($settings->getPossiblePositions());
+
+		$pluginSettingsSaved = Craft::$app->getPlugins()->savePluginSettings(CheckIt::getInstance(), $settings->toArray());
+
+        if (!$pluginSettingsSaved) {
+            $this->setFailFlash(Craft::t('abm-checkit', 'Couldn’t save settings.'));
+            return $this->renderTemplate('abm-checkit/settings/position', compact('settings'));
+        }
+
+        $this->setSuccessFlash(Craft::t('abm-checkit', 'Position Settings saved'));
+
+		return $this->redirectToPostedUrl();
 	}
 }

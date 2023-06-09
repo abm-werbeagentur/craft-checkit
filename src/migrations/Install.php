@@ -1,12 +1,17 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\migrations;
 
 use craft\db\Migration;
 use craft\helpers\Db;
 use craft\helpers\MigrationHelper;
 
-use abmat\checkit\records\SettingRecord;
 use abmat\checkit\records\EntryRecord;
+use abmat\checkit\records\SectionRecord;
 
 class Install extends Migration
 {
@@ -29,7 +34,7 @@ class Install extends Migration
 
     public function createTables(): void
     {
-       $this->createTable(SettingRecord::$tableName, [
+       $this->createTable(SectionRecord::$tableName, [
             'id' => $this->primaryKey(),
             'groupType' => $this->string(255),
             'groupId' => $this->integer(),
@@ -52,7 +57,7 @@ class Install extends Migration
 
     public function dropTables(): void
     {
-        $this->dropTableIfExists(SettingRecord::$tableName);
+        $this->dropTableIfExists(SectionRecord::$tableName);
         $this->dropTableIfExists(EntryRecord::$tableName);
     }
 }

@@ -1,4 +1,9 @@
 <?php
+/**
+ * @link https://abm.at
+ * @copyright Copyright (c) abm Feregyhazy & Simon GmbH
+*/
+
 namespace abmat\checkit\widgets;
 
 use Craft;
@@ -59,9 +64,13 @@ class OverviewSite extends Widget
     {
 		$site = $this->_getSite();
 
-		$siteList = CheckIt::$plugin->getEntries()->getOverviewForSite($site);
+        if($site === null) {
+            return null;
+        }
 
-		return Craft::$app->getView()->renderTemplate('abm-checkit/_widgets/OverviewSite/body.twig',
+        $siteList = CheckIt::$plugin->getEntries()->getOverviewForSite($site);
+
+        return Craft::$app->getView()->renderTemplate('abm-checkit/_widgets/OverviewSite/body.twig',
 			[
 				'widget' => $this,
 				'sitelist' => $siteList,
