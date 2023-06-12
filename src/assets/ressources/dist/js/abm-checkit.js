@@ -15,6 +15,10 @@ $(function() {
 	}
 	
 	$("#abm-checkit-sidebar *[data-toggle='collapse'], #abm-checkit-overview *[data-toggle='collapse']").on("click",function() {
+		if($(this).parents("#abm-checkit-overview").length) {
+			$(this).toggleClass("collapsed");
+		}
+
 		if($($(this).data("target")).length) {
 			$($(this).data("target")).toggleClass("in");
 		}

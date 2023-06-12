@@ -6,8 +6,30 @@
 	padding: 14px 0px;
 }
 
-#abm-checkit-overview *[data-toggle='collapse'] {
+#abm-checkit-overview button[data-toggle='collapse'] {
 	cursor: pointer;
+	position: relative;
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 1.2;
+}
+	
+#abm-checkit-overview button[data-toggle='collapse']:after {
+	content: '';
+	position: absolute;
+	right: -25px;
+	top: 0;
+	rotate: 180deg;
+	width: 20px;
+	height: 20px;
+	background-image: url(../img/chevron_down.svg);
+	background-size: contain;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+#abm-checkit-overview button.collapsed[data-toggle='collapse']:after {
+	rotate: 0deg;
 }
 
 #abm-checkit-sidebar .collapse,

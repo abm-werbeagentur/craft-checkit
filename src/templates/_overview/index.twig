@@ -7,9 +7,9 @@
 	<div id="abm-checkit-overview">
 
 		{% for site in checkitSites %}
-			<h2 data-toggle='collapse' data-target="#SiteTable{{ site.id }}">{{ site.name }}</h2>
+			<button class="{{ loop.index0?'collapsed' }}" data-toggle='collapse' data-target="#SiteTable{{ site.id }}">{{ site.name }}</button><br />
 
-			<div class="collapse{{ not loop.index0?' in'}}" id="SiteTable{{ site.id }}">
+			<div class="collapse{{ not loop.index0?' in' }}" id="SiteTable{{ site.id }}">
 				<table class="data table">
 					<tr>
 						<th>{{ 'Section'|t('app') }}</th>
