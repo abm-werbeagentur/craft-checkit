@@ -242,7 +242,7 @@ class CheckIt extends Plugin {
             ];
 
             $event->permissions[] = [
-                'heading' => Craft::t('abm-checkit', '`Checkit`'),
+                'heading' => Craft::t('abm-checkit', 'Checkit'),
                 'permissions' => $permissions,
             ];
         });
