@@ -39,11 +39,7 @@ class Entries extends Component
 			"siteId" => $siteId,
 		])->one();
 
-		if($EntryRaw) {
-			return true;
-		}
-
-		return false;
+		return $EntryRaw ? true : false;
 	}
 
 	public function getCurrentUserSections(): array
