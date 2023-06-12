@@ -260,13 +260,15 @@ class Entries extends Component
 			and entries.id is null'
 		)->execute();
 
-		Craft::$app->db->createCommand('delete abm_checkit_entries.* 
-			FROM `abm_checkit_entries` 
-			left join commerce_products 
-				on commerce_products.id=abm_checkit_entries.entryId 
-			where abm_checkit_entries.groupType=\'productTypes\' 
-			and commerce_products.id is null'
-		)->execute();
+		if(Plugin::$plugin->commerceInstalled) {
+			Craft::$app->db->createCommand('delete abm_checkit_entries.* 
+				FROM `abm_checkit_entries` 
+				left join commerce_products 
+					on commerce_products.id=abm_checkit_entries.entryId 
+				where abm_checkit_entries.groupType=\'productTypes\' 
+				and commerce_products.id is null'
+			)->execute();
+		}
 	}
 
 	/**
