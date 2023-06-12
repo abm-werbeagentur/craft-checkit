@@ -40,10 +40,10 @@ class Entries extends Component
 		])->one();
 
 		if($EntryRaw) {
-			return false;
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	public function getCurrentUserSections(): array
@@ -142,7 +142,7 @@ class Entries extends Component
 		return $countEntries;
 	}
 
-	public function completeCheckitStatus($groupType, $entryId, $siteId): void
+	public function deleteCheckitStatus($groupType, $entryId, $siteId): void
 	{
 		Craft::$app->db->createCommand()->delete(
 			EntryRecord::$tableName,
@@ -154,9 +154,9 @@ class Entries extends Component
 		)->execute();
 	}
 
-	public function incompleteCheckitStatus($groupType, $entryId, $siteId): void
+	public function addCheckitStatus($groupType, $entryId, $siteId): void
 	{
-		if($this->getEntryCheckitStatus($groupType, $entryId, $siteId)) {
+		if(!$this->getEntryCheckitStatus($groupType, $entryId, $siteId)) {
 			$record = new EntryRecord();
 			$record->setAttribute('groupType', $groupType);
 			$record->setAttribute('entryId', $entryId);
@@ -229,8 +229,6 @@ class Entries extends Component
 
 	public function afterDeleteSection(SectionEvent $event): void
 	{
-
-
 		$this->deleteTrashedEntries();
 	}
 

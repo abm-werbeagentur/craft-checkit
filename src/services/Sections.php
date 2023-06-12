@@ -22,10 +22,7 @@ class Sections extends Component {
 
 	public function getValidSections()
 	{
-		return array_filter(
-			Craft::$app->sections->getAllSections(),
-			[$this, '_hasMultiSiteEntries']
-		);
+		return Craft::$app->sections->getAllSections();
 	}
 
 	public function getAllEnabledSections(): array

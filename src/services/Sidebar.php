@@ -14,6 +14,7 @@ use craft\events\DefineHtmlEvent;
 use craft\events\ElementEvent;
 use craft\events\ModelEvent;
 use craft\helpers\ElementHelper;
+use craft\models\Section;
 
 use craft\commerce\elements\Product as CommerceProduct;
 use craft\commerce\Plugin as CommercePlugin;
@@ -39,18 +40,38 @@ class Sidebar extends Component
 		if(Plugin::$plugin->getSections()->isInSectionEnabled("sections",$entry->sectionId)) {
 			$currentSection = $entry->section;
 
-			if($currentSection && $currentSection->getHasMultiSiteEntries()) {
+			if($currentSection) {
 				$currentUser = Craft::$app->getUser();
+				$currentSite = Craft::$app->getSites()->getcurrentSite();
 
 				$template_vars = ["checkitSites" => []];
 
 				$siteSettings = $currentSection->getSiteSettings();
-				$sites = Craft::$app->getSites()->getAllSites();
+
+				if($currentSection->getHasMultiSiteEntries()) {
+					if($currentSection->propagationMethod == Section::PROPAGATION_METHOD_SITE_GROUP) {
+						$sites = Craft::$app->getSites()->getSitesByGroupId($currentSite->group->id);
+						
+					} elseif($currentSection->propagationMethod == Section::PROPAGATION_METHOD_LANGUAGE ) {
+						$testsites = Craft::$app->getSites()->getEditableSites();
+						$sites = [];
+
+						foreach($testsites as $site) {
+
+							if($currentSite->language == $site->language) {
+								$sites[] = $site;
+							}
+						}
+
+					} else {
+						$sites = Craft::$app->getSites()->getEditableSites();
+					}
+
+				} else {
+					$sites = [$currentSite];
+				}
 
 				foreach($sites as $site) {
-					if(!$currentUser->checkPermission("editSite:" . $site->uid)) {
-						continue;
-					}
 				
 					foreach($siteSettings as $siteSetting) {
 
@@ -72,10 +93,6 @@ class Sidebar extends Component
 							"name" => $siteSetting->site->name,
 							"status" => false,
 						];
-
-						if($siteSetting->site->id == $entry->siteId) {
-							$template_site["status"] = true;
-						}
 
 						if(!$entry->getIsFresh()) {
 							$template_site["status"] = Plugin::$plugin->getEntries()->getEntryCheckitStatus("sections",$entry->id,$siteSetting->site->id);
@@ -104,12 +121,9 @@ class Sidebar extends Component
 			$currentUser = Craft::$app->getUser();
 			$template_vars = ["checkitSites" => []];
 
-			$sites = Craft::$app->getSites()->getAllSites();
+			$sites = Craft::$app->getSites()->getEditableSites();
 
 			foreach($sites as $site) {
-				if(!$currentUser->checkPermission("editSite:" . $site->uid)) {
-					continue;
-				}
 
 				foreach(CommercePlugin::getInstance()->getProductTypes()->getProductTypeSites($context["productType"]->id) as $siteSetting) {
 
@@ -192,15 +206,15 @@ class Sidebar extends Component
 				foreach($checkitStatus["sites"] as $siteid => $changes) {
 
 					if($action == "elements/apply-draft") {
-						$changes["old"] = 1;
+						$changes["old"] = 0;
 					}
 
 					if($changes["old"]!=$changes["new"]) {
 
 						if($changes["new"]) {
-							Plugin::$plugin->getEntries()->completeCheckitStatus("sections", $entry->id,$siteid);
+							Plugin::$plugin->getEntries()->addCheckitStatus("sections", $entry->id,$siteid);
 						} else {
-							Plugin::$plugin->getEntries()->incompleteCheckitStatus("sections", $entry->id,$siteid);
+							Plugin::$plugin->getEntries()->deleteCheckitStatus("sections", $entry->id,$siteid);
 						}
 					}
 				}
@@ -214,9 +228,9 @@ class Sidebar extends Component
 					if($changes["old"]!=$changes["new"]) {
 
 						if($changes["new"]) {
-							Plugin::$plugin->getEntries()->completeCheckitStatus("productTypes", $entry->id, $siteid);
+							Plugin::$plugin->getEntries()->addCheckitStatus("productTypes", $entry->id, $siteid);
 						} else {
-							Plugin::$plugin->getEntries()->incompleteCheckitStatus("productTypes", $entry->id, $siteid);
+							Plugin::$plugin->getEntries()->deleteCheckitStatus("productTypes", $entry->id, $siteid);
 						}
 					}
 				}
