@@ -332,27 +332,25 @@ class Entries extends Component
 					continue;
 				}
 
-				if($section->getHasMultiSiteEntries()) {
-					foreach($section->siteIds as $siteid) {
+				foreach($section->siteIds as $siteid) {
 
-						if($siteid != $site->id) {
-							continue;
-						}
+					if($siteid != $site->id) {
+						continue;
+					}
 
-						if($section->type == Section::TYPE_SINGLE) {
-							$siteList["sections"]["singles"]["ids"][] = $section->id;
+					if($section->type == Section::TYPE_SINGLE) {
+						$siteList["sections"]["singles"]["ids"][] = $section->id;
 
-						} else {
-							$siteList["sections"][] =[
-								"name"=>$section->name,
-								"handle" => $section->handle,
-								"source" => "section:" . $section->uid,
-								"ids"=>[$section->id],
-								"uid" => $section->uid,
-								"amountElements" => 0,
-								"amountOutstanding" => 0
-							];
-						}
+					} else {
+						$siteList["sections"][] =[
+							"name"=>$section->name,
+							"handle" => $section->handle,
+							"source" => "section:" . $section->uid,
+							"ids"=>[$section->id],
+							"uid" => $section->uid,
+							"amountElements" => 0,
+							"amountOutstanding" => 0
+						];
 					}
 				}
 			}
