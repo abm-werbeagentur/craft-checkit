@@ -12,13 +12,19 @@
 	font-weight: 700;
 	font-size: 16px;
 	line-height: 1.2;
+	background-color: #E4EDF6;
+	display: block;
+	width: 100%;
+	padding: 10px 40px;
+	text-align: left;
+	border-radius: var(--large-border-radius);
 }
 	
 #abm-checkit-overview button[data-toggle='collapse']:after {
 	content: '';
 	position: absolute;
-	right: -25px;
-	top: 0;
+	left: 10px;
+	top: 10px;
 	rotate: 180deg;
 	width: 20px;
 	height: 20px;
@@ -41,6 +47,30 @@
 #abm-checkit-sidebar .collapse.in,
 #abm-checkit-overview .collapse.in {
 	height: auto;
+}
+
+#abm-checkit-overview table > thead {
+	--small-border-radius: var(--large-border-radius);
+}
+
+
+#abm-checkit-overview table > thead > tr th {
+	background-color: #606D7B;
+	color: white;
+}
+
+#abm-checkit-overview table > tbody > tr:hover a {
+	padding-right: 20px;
+	background-image: url(../img/eye.svg);
+	background-size: 12px 9px;
+	background-position: center right;
+	background-repeat: no-repeat;
+}
+
+#abm-checkit-overview table > tbody td {
+	border-bottom: 1px solid #E4EDF6;
+	padding-top: 15px;
+	padding-bottom: 15px;
 }
 
 #abm-checkit-sidebar #EnabledLanguages   {
@@ -69,13 +99,4 @@
 
 #abm-checkit-sidebar .btn.expand-checkit-btn:before {
 	margin: 0;
-}
-
-.abm-checkit-tag {
-	display: inline-block;
-	padding: 0 5px;
-	vertical-align: middle;
-	font-size: 11px;
-	background-color: #eee;
-	border-radius: 3px;
 }
