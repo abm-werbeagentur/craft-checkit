@@ -278,14 +278,4 @@ class Sections extends Component {
 			}
 		}
 	}
-
-	/**
-	 * @param Section $thing
-	 *
-	 * @return bool
-	 */
-	private function _hasMultiSiteEntries($thing): bool
-	{
-		return $thing->getHasMultiSiteEntries();
-	}
 }
