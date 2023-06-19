@@ -42,7 +42,7 @@ class Sidebar extends Component
 
 			if($currentSection) {
 				$currentUser = Craft::$app->getUser();
-				$currentSite = Craft::$app->getSites()->getcurrentSite();
+				$currentSite = Craft::$app->getSites()->getCurrentSite();
 
 				$template_vars = ["checkitSites" => []];
 
@@ -68,7 +68,11 @@ class Sidebar extends Component
 					}
 
 				} else {
-					$sites = [$currentSite];
+					if($entry->siteId) {
+						$sites = [Craft::$app->getSites()->getSiteById($entry->siteId,true)];
+					} else {
+						$sites = [$currentSite];
+					}
 				}
 
 				foreach($sites as $site) {
