@@ -1,7 +1,3 @@
-#abm-checkit-sidebar > .meta {
-	padding-top: 15px;
-}
-
 #abm-checkit-sidebar > .meta > .heading {
 	padding: 14px 0px;
 }
@@ -73,6 +69,16 @@
 	padding-bottom: 15px;
 }
 
+#checkitHelp.in {
+	margin: 0 var(--neg-padding) !important;
+	padding: 15px var(--padding);
+	border-bottom: 1px solid var(--hairline-color)
+}
+
+#abm-checkit-sidebar .meta.hasHelp > *:nth-child(2) {
+	border-top: none;
+}
+
 #abm-checkit-sidebar #EnabledLanguages   {
 	margin: 0 var(--neg-padding) !important;
 }
@@ -99,4 +105,47 @@
 
 #abm-checkit-sidebar .btn.expand-checkit-btn:before {
 	margin: 0;
+}
+
+#abm-checkit-isMarkedInformation {
+	padding-bottom: 15px;
+	font-weight: 700;
+	color: red;
+}
+
+.abmInfo {
+	vertical-align: bottom;
+	display: inline-block;
+	width: 1em;
+	height: 1.375em;
+	text-align: center;
+	cursor: pointer;
+	overflow: hidden;
+}
+  
+.abmInfo:before {
+	content: 'info';
+	-webkit-font-feature-settings: "liga","dlig";
+	-ms-font-feature-settings: "liga","dlig";
+	-o-font-feature-settings: "liga","dlig";
+	font-feature-settings: "liga","dlig";
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	word-wrap: normal !important;
+	color: var(--ui-control-color);
+	direction: ltr;
+	font-family: Craft;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+	line-height: 1;
+	line-height: 1.375;
+	opacity: var(--icon-opacity);
+	text-rendering: optimizeLegibility;
+	text-transform: none;
+	-webkit-user-select: none;
+	user-select: none;
+	vertical-align: middle;
+	vertical-align: baseline;
+	width: 100%;
 }

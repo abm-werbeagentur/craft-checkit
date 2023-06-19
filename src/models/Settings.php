@@ -18,6 +18,8 @@ class Settings extends Model
 
 	public $positionInCommmerceProducts = '0';
 
+	public $showInformations = 1;
+
 	/**
      * Returns a key-value array of positions.
      */

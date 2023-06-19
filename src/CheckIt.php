@@ -228,7 +228,7 @@ class CheckIt extends Plugin {
 
             $event->rules['POST abm-checkit/settings/section'] = 'abm-checkit/settings/save-section';
             $event->rules['abm-checkit/settings/section'] = 'abm-checkit/settings/section';
-            $event->rules['abm-checkit/settings/position'] = 'abm-checkit/settings/position';
+            $event->rules['abm-checkit/settings/sidebar'] = 'abm-checkit/settings/sidebar';
         });
 	}
 

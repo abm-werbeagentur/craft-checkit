@@ -15,13 +15,20 @@
 			"configvar": "craft.app.config.general.allowAdminChanges"
 		})}}
 		<br />
-		{{ "To set the position, you have to enable this config"|t('abm-checkit')}}
+		{{ "To set any sidebar settings, you have to enable this config"|t('abm-checkit')}}
 	 {% else %}
 
 		<form action="" method="post" accept-charset="UTF-8" data-saveshortcut>
 			<input type="hidden" name="action" value="abm-checkit/settings/save-settings">
-			{{ redirectInput('abm-checkit/settings/position') }}
+			{{ redirectInput('abm-checkit/settings/sidebar') }}
 			{{ csrfInput() }}
+
+			{{ forms.lightswitchField({
+				label: "Show informations / help"|t('abm-checkit'),
+				name: 'settings[showInformations]',
+				id: 'showInformations',
+				on: settings.showInformations
+			}) }}
 
 			{{ forms.selectField({
 				label: "Position in edit entries"|t('abm-checkit'),

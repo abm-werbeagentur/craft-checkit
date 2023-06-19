@@ -104,9 +104,26 @@ class Sidebar extends Component
 
 				$settings = Plugin::getInstance()->getSettings();
 
+				$template_vars["showInformations"] = 0;
+				$template_vars["showIsMarkedInformation"] = 0;
+				if(isset($settings["showInformations"]) && is_numeric($settings["showInformations"]) && $settings["showInformations"]) {
+
+					$template_vars["showInformations"] = $settings["showInformations"];
+
+					foreach($template_vars["checkitSites"] as $template_site) {
+						if($entry->siteId == $template_site["id"] && $template_site["status"]) {
+							$template_vars["showIsMarkedInformation"] = 1;
+						}
+					}
+				}
+
 				$template_vars["checkitPosition"] = 0;
 				if(isset($settings["positionInEntries"]) && is_numeric($settings["positionInEntries"])) {
 					$template_vars["checkitPosition"] = $settings["positionInEntries"];
+
+					if($template_vars["showIsMarkedInformation"] && $template_vars["checkitPosition"]) {
+						$template_vars["checkitPosition"]++;
+					}
 				}
 
 				$event->html .= $this->_renderEntrySidebarPanel('sidebar',$template_vars);
@@ -156,9 +173,26 @@ class Sidebar extends Component
 
 			$settings = Plugin::getInstance()->getSettings();
 
+			$template_vars["showInformations"] = 0;
+			$template_vars["showIsMarkedInformation"] = 0;
+			if(isset($settings["showInformations"]) && is_numeric($settings["showInformations"]) && $settings["showInformations"]) {
+
+				$template_vars["showInformations"] = $settings["showInformations"];
+
+				foreach($template_vars["checkitSites"] as $template_site) {
+					if($context["product"]->siteId == $template_site["id"] && $template_site["status"]) {
+						$template_vars["showIsMarkedInformation"] = 1;
+					}
+				}
+			}
+
 			$template_vars["checkitPosition"] = 0;
 			if(isset($settings["positionInCommmerceProducts"]) && is_numeric($settings["positionInCommmerceProducts"])) {
 				$template_vars["checkitPosition"] = $settings["positionInCommmerceProducts"];
+
+				if($template_vars["showIsMarkedInformation"] && $template_vars["checkitPosition"]) {
+					$template_vars["checkitPosition"]++;
+				}
 			}
 
 			return $this->_renderEntrySidebarPanel('sidebar',$template_vars);

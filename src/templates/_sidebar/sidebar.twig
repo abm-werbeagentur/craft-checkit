@@ -1,9 +1,27 @@
 {% import "_includes/forms" as forms %}
 
-<fieldset id="abm-checkit-sidebar" data-position="{{ checkitPosition }}">
-	<legend class="h6">{{ 'Check it'|t('abm-checkit') }}</legend>
+{% if showIsMarkedInformation %}
+	<div id="abm-checkit-isMarkedInformation" class="checkit-element" data-position="1">
+	{{ 'This entry is checked. Please edit and finish in the CheckIt field.'|t('abm-checkit') }}
+	</div>
+{% endif %}
 
-	<div class="meta">
+<fieldset id="abm-checkit-sidebar" class="checkit-element" data-position="{{ checkitPosition }}">
+	<legend class="h6">
+		{{ 'Check it'|t('abm-checkit') }}
+		{% if showInformations %}
+			<span class="abmInfo" data-toggle='collapse' data-target="#checkitHelp" type="button" aria-expanded="false" aria-lable="info"></span>
+		{% endif %}
+	</legend>
+
+	<div class="meta{{ showInformations?" hasHelp":"" }}">
+		{% if showInformations %}
+			<div id="checkitHelp" class="collapse">
+				{{ 'Mark the current entry in the respective site/language to indicate need for action.'|t('abm-checkit') }}<br />
+				{{ 'Green = marked'|t('abm-checkit') }}<br />
+				{{ 'Grey = task completed / no task'|t('abm-checkit') }}
+			</div>
+		{% endif %}
 		{% for sitestatus in checkitSites|slice(0,3) %}
 			{{ forms.lightswitchField({
 				label: sitestatus.name,

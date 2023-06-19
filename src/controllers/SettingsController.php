@@ -52,7 +52,7 @@ class SettingsController extends Controller {
 	/**
 	 * @throws ForbiddenHttpException
 	 */
-	public function actionPosition (): Response
+	public function actionSidebar (): Response
 	{
 		$currentUser = Craft::$app->user;
 		if (!$currentUser->checkPermission('abm-checkit-settings')) {
@@ -65,7 +65,7 @@ class SettingsController extends Controller {
 
 		$this->view->registerAssetBundle(CPAssets::class);
 		
-		return $this->renderTemplate('abm-checkit/settings/_position', [
+		return $this->renderTemplate('abm-checkit/settings/_sidebar', [
 			'namespace' => $namespace,
 			'settings' => $settings,
         ]);
@@ -116,15 +116,16 @@ class SettingsController extends Controller {
         $settings = CheckIt::getInstance()->getSettings();
         $settings->positionInEntries = $data['positionInEntries'] ?? key($settings->getPossiblePositions());
 		$settings->positionInCommmerceProducts = $data['positionInCommmerceProducts'] ?? key($settings->getPossiblePositions());
+		$settings->showInformations = $data['showInformations'];
 
 		$pluginSettingsSaved = Craft::$app->getPlugins()->savePluginSettings(CheckIt::getInstance(), $settings->toArray());
 
         if (!$pluginSettingsSaved) {
             $this->setFailFlash(Craft::t('abm-checkit', 'Couldn’t save settings.'));
-            return $this->renderTemplate('abm-checkit/settings/position', compact('settings'));
+            return $this->renderTemplate('abm-checkit/settings/sidebar', compact('settings'));
         }
 
-        $this->setSuccessFlash(Craft::t('abm-checkit', 'Position Settings saved'));
+        $this->setSuccessFlash(Craft::t('abm-checkit', 'Settings saved'));
 
 		return $this->redirectToPostedUrl();
 	}
