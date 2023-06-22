@@ -54,3 +54,9 @@ Checkit requires Craft CMS 4.
 ## Plugin Video Guide
 
 [Watch on Youtube](https://www.youtube.com/watch?v=bNO9j2k2vbs)
+
+
+
+
+---
+*Created and maintained by [abm Feregyhazy & Simon GmbH](https://www.abm.at)*
