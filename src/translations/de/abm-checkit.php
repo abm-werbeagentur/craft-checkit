@@ -12,9 +12,9 @@ return [
 	'Set "Checked"' => 'Als "Überprüft" markieren',
 	'Overview' => 'Übersicht',
 	'Marked {entries}' => 'Markierte {entries}',
-	'This entry is checked. Please edit and finish in the CheckIt field.' => 'Dieser Eintrag ist markiert. Bitte bearbeiten und im CheckIt Feld abschließen.',
-	'Mark the current entry in the respective site/language to indicate need for action.' => 'Markiere den aktuellen Eintrag in der jeweiligen Seite/Sprache um Handlungsbedarf anzuzeigen.',
-	'Green = marked' => 'Grün = markiert',
-	'Grey = task completed / no task' => 'Grau = Aufgabe erledigt / keine Aufgabe',
+	'This entry has been marked as "editing pending". Please edit the entry and set the marker to "done" in the "CheckIt field" to complete the task.' => 'Dieser Eintrag wurde markiert. Bitte bearbeite den Eintrag und setze anschließend im „CheckIt-Feld“ den Marker auf „erledigt“, um die Aufgabe abzuschließen.',
+	'Use the toggle switch below to indicate that an action is required for the respective site/language.' => 'Verwende den unten angezeigten Umschalter, um für die jeweilige Seite/Sprache anzuzeigen, dass eine Aktion notwendig ist.',
+	'Green = action required / pending' => 'Grün = es ist eine Aktion erforderlich / Bearbeitung offen',
+	'Gray = no action required / the task has been completed' => 'Grau = es ist keine Aktion erforderlich / die Aufgabe wurde abgeschlossen',
 ];
 ?>

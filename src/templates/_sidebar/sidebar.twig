@@ -2,7 +2,7 @@
 
 {% if showIsMarkedInformation %}
 	<div id="abm-checkit-isMarkedInformation" class="checkit-element" data-position="1">
-	{{ 'This entry is checked. Please edit and finish in the CheckIt field.'|t('abm-checkit') }}
+	{{ 'This entry has been marked as "editing pending". Please edit the entry and set the marker to "done" in the "CheckIt field" to complete the task.'|t('abm-checkit') }}
 	</div>
 {% endif %}
 
@@ -17,9 +17,9 @@
 	<div class="meta{{ showInformations?" hasHelp":"" }}">
 		{% if showInformations %}
 			<div id="checkitHelp" class="collapse">
-				{{ 'Mark the current entry in the respective site/language to indicate need for action.'|t('abm-checkit') }}<br />
-				{{ 'Green = marked'|t('abm-checkit') }}<br />
-				{{ 'Grey = task completed / no task'|t('abm-checkit') }}
+				{{ 'Use the toggle switch below to indicate that an action is required for the respective site/language.'|t('abm-checkit') }}<br />
+				{{ 'Green = action required / pending'|t('abm-checkit') }}<br />
+				{{ 'Gray = no action required / the task has been completed'|t('abm-checkit') }}
 			</div>
 		{% endif %}
 		{% for sitestatus in checkitSites|slice(0,3) %}
