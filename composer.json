@@ -1,6 +1,6 @@
 {
 	"name": "abmat/craft-checkit",
-	"description": "Check it",
+	"description": "Effortlessly mark section entries to streamline collaboration and content organization.",
 	"type": "craft-plugin",
 	"license": "proprietary",
 	"authors": [
@@ -11,6 +11,10 @@
 	],
 	"require": {
 	  "craftcms/cms": "^4.0.0"
+	},
+	"support": {
+		"issues": "https://github.com/abm-werbeagentur/craft-checkit/issues",
+    	"source": "https://github.com/abm-werbeagentur/craft-checkit"
 	},
 	"autoload": {
 	  "psr-4": {
