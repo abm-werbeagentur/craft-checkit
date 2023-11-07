@@ -140,13 +140,10 @@ class CheckIt extends Plugin {
         return $item;
 	}
 
-    /**
-     * @inheritdoc
-     */
     protected function createSettingsModel(): ?Model
-    {
-        return new Settings();
-    }
+	{
+		return new Settings();
+	}
 
 	private function _registerCraftEventListeners(): void
     {
@@ -170,11 +167,13 @@ class CheckIt extends Plugin {
                     $tags[] = "element::$elementType::*";
                 }
 
-                $productClassname = Product::class;
-                if(in_array("element::$productClassname::*",$event->tags)) {
-                    $elementType = PluginProduct::class;
-                    $tags[] = "element::$elementType";
-                    $tags[] = "element::$elementType::*";
+                if(class_exists(Product::class)) {
+                    $productClassname = Product::class;
+                    if(in_array("element::$productClassname::*",$event->tags)) {
+                        $elementType = PluginProduct::class;
+                        $tags[] = "element::$elementType";
+                        $tags[] = "element::$elementType::*";
+                    }
                 }
             }
 

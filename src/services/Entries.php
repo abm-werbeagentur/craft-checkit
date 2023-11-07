@@ -82,17 +82,20 @@ class Entries extends Component
 
 		$productTypeIdsWithPermission = [];
 
-		$pluginsService = Craft::$app->getPlugins();
-		if ($pluginsService->isPluginInstalled('commerce') && $pluginsService->isPluginEnabled('commerce')) {
-			$enabledProductTypes = Plugin::$plugin->getSections()->getAllEnabledProductTypes();
+		if(class_exists(\craft\commerce\Plugin::class)) {
+			$pluginsService = Craft::$app->getPlugins();
+			
+			if ($pluginsService->isPluginInstalled('commerce') && $pluginsService->isPluginEnabled('commerce')) {
+				$enabledProductTypes = Plugin::$plugin->getSections()->getAllEnabledProductTypes();
 
-			foreach(array_keys($enabledProductTypes) as $productTypeId) {
+				foreach(array_keys($enabledProductTypes) as $productTypeId) {
 
-				$productType = \craft\commerce\Plugin::getInstance()->getProductTypes()->getProductTypeById($productTypeId);
+					$productType = \craft\commerce\Plugin::getInstance()->getProductTypes()->getProductTypeById($productTypeId);
 
-				if($productType) {
-					if($currentUser->checkPermission("commerce-editProductType:" . $productType->uid)) {
-						$productTypeIdsWithPermission[] = $productTypeId;
+					if($productType) {
+						if($currentUser->checkPermission("commerce-editProductType:" . $productType->uid)) {
+							$productTypeIdsWithPermission[] = $productTypeId;
+						}
 					}
 				}
 			}
@@ -232,7 +235,7 @@ class Entries extends Component
 	{
 		if (!(
 			$event->element instanceof Entry || 
-			$event->element instanceof CommerceProduct
+			(class_exists(CommerceProduct::class) && $event->element instanceof CommerceProduct)
 		)) {
 			return;
 		}
@@ -356,7 +359,7 @@ class Entries extends Component
 			}
 		}
 
-		if(Plugin::$plugin->commerceInstalled) {
+		if(Plugin::$plugin->commerceInstalled && class_exists(CommercePlugin::class)) {
 			$editableProductTypes = CommercePlugin::getInstance()->getProductTypes()->getEditableProductTypes();
 
 			if(!empty($editableProductTypes)) {

@@ -134,6 +134,10 @@ class Sidebar extends Component
 
 	public function hookCommerceProductEditDetails(array &$context): ?string
 	{
+		if(!class_exists(CommercePlugin::class)) {
+			return "";
+		}
+
 		if(Plugin::$plugin->getSections()->isInSectionEnabled("productTypes",$context["productType"]->id)) {
 			$currentUser = Craft::$app->getUser();
 			$template_vars = ["checkitSites" => []];
@@ -205,7 +209,7 @@ class Sidebar extends Component
     {
 		if (!(
 			$event->element instanceof Entry || 
-			$event->element instanceof CommerceProduct
+			(class_exists(CommerceProduct::class) && $event->element instanceof CommerceProduct)
 		)) {
             return;
         }

@@ -71,10 +71,12 @@ class Sections extends Component {
 
 	public function getValidProductTypes()
 	{
-		$pluginsService = Craft::$app->getPlugins();
-		if ($pluginsService->isPluginInstalled('commerce') && $pluginsService->isPluginEnabled('commerce')) {
+		if(class_exists(\craft\commerce\Plugin::class)) {
+			$pluginsService = Craft::$app->getPlugins();
+			if ($pluginsService->isPluginInstalled('commerce') && $pluginsService->isPluginEnabled('commerce')) {
 
-			return \craft\commerce\Plugin::getInstance()->productTypes->getAllProductTypes();
+				return \craft\commerce\Plugin::getInstance()->productTypes->getAllProductTypes();
+			}
 		}
 
 		return [];
@@ -195,7 +197,7 @@ class Sections extends Component {
 					['in', 'id', $idsToDelete]
 				)->execute();
 
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				checkit::error($e->getMessage());
 				return false;
 			}

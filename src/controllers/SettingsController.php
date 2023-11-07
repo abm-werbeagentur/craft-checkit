@@ -14,6 +14,7 @@ use Throwable;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\web\HttpException;
 
 use abmat\checkit\CheckIt;
@@ -113,7 +114,7 @@ class SettingsController extends Controller {
         $params = $this->request->getBodyParams();
         $data = $params['settings'];
 
-        $settings = CheckIt::getInstance()->getSettings();
+		$settings = CheckIt::getInstance()->getSettings();
         $settings->positionInEntries = $data['positionInEntries'] ?? key($settings->getPossiblePositions());
 		$settings->positionInCommmerceProducts = $data['positionInCommmerceProducts'] ?? key($settings->getPossiblePositions());
 		$settings->showInformations = $data['showInformations'];
