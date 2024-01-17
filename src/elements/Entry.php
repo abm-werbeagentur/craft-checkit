@@ -64,7 +64,7 @@ class Entry extends CraftEntry
 		$singleSectionIds = [];
 		$sectionsByType = [];
 
-		$sections = Craft::$app->getSections()->getEditableSections();
+		$sections = Craft::$app->getEntries()->getEditableSections();
 
 		$enabledSections = CheckIt::$plugin->getSections()->getAllEnabledSections();
 		

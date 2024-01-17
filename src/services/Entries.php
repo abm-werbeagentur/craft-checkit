@@ -54,7 +54,7 @@ class Entries extends Component
 		$enabledSections = Plugin::$plugin->getSections()->getAllEnabledSections();
 
 		foreach(array_keys($enabledSections) as $sectionId) {
-			$section = Craft::$app->sections->getSectionById($sectionId);
+			$section = Craft::$app->getEntries()->getSectionById($sectionId);
 
 			if($section) {
 				if($currentUser->checkPermission("saveEntries:" . $section->uid)) {
@@ -78,7 +78,7 @@ class Entries extends Component
 			return [];
 		}
 
-		$sectionIdsWithPermissions = Craft::$app->sections->getEditableSectionIds();
+		$sectionIdsWithPermissions = Craft::$app->getEntries()->getEditableSectionIds();
 
 		$productTypeIdsWithPermission = [];
 
@@ -324,7 +324,7 @@ class Entries extends Component
 			"productTypes" => [],
 		];
 
-		$editableSections = Craft::$app->sections->getEditableSections();
+		$editableSections = Craft::$app->getEntries()->getEditableSections();
 
 		if(!empty($editableSections)) {
 			$enabledSections = Plugin::$plugin->getSections()->getAllEnabledSections();

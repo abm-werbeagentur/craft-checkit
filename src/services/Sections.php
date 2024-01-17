@@ -22,7 +22,7 @@ class Sections extends Component {
 
 	public function getValidSections()
 	{
-		return Craft::$app->sections->getAllSections();
+		return Craft::$app->getEntries()->getAllSections();
 	}
 
 	public function getAllEnabledSections(): array

@@ -18,7 +18,7 @@ use craft\events\RegisterUserPermissionsEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Dashboard;
 use craft\services\Elements;
-use craft\services\Sections;
+use craft\services\Entries;
 use craft\services\Sites;
 use craft\services\UserPermissions;
 use craft\web\UrlManager;
@@ -147,8 +147,8 @@ class CheckIt extends Plugin {
 
 	private function _registerCraftEventListeners(): void
     {
-        Event::on(Sections::class, Sections::EVENT_AFTER_DELETE_SECTION, [$this->getSections(), 'afterDeleteSection']);
-        Event::on(Sections::class, Sections::EVENT_AFTER_SAVE_SECTION, [$this->getSections(), "afterSaveSection"]);
+        Event::on(Entries::class, Entries::EVENT_AFTER_DELETE_SECTION, [$this->getSections(), 'afterDeleteSection']);
+        Event::on(Entries::class, Entries::EVENT_AFTER_SAVE_SECTION, [$this->getSections(), "afterSaveSection"]);
 
         Event::on(Sites::class, Sites::EVENT_AFTER_DELETE_SITE, [$this->getEntries(), "afterDeleteSite"]);
 
