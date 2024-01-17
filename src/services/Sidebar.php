@@ -10,6 +10,7 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\elements\Entry;
+use craft\enums\PropagationMethod;
 use craft\events\DefineHtmlEvent;
 use craft\events\ElementEvent;
 use craft\events\ModelEvent;
@@ -49,10 +50,10 @@ class Sidebar extends Component
 				$siteSettings = $currentSection->getSiteSettings();
 
 				if($currentSection->getHasMultiSiteEntries()) {
-					if($currentSection->propagationMethod == Section::PROPAGATION_METHOD_SITE_GROUP) {
+					if($currentSection->propagationMethod == PropagationMethod::SiteGroup) {
 						$sites = Craft::$app->getSites()->getSitesByGroupId($currentSite->group->id);
 						
-					} elseif($currentSection->propagationMethod == Section::PROPAGATION_METHOD_LANGUAGE ) {
+					} elseif($currentSection->propagationMethod == PropagationMethod::Language) {
 						$testsites = Craft::$app->getSites()->getEditableSites();
 						$sites = [];
 
