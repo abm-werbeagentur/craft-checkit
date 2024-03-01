@@ -45,11 +45,10 @@ composer require abmat/craft-checkit
 php craft plugin/install abm-checkit
 ```
 
-Then open your project's control panel, navigate to Settings &rarr; Plugins, find Checkit and click Install.
-
 ### Requirements
 
-Checkit requires Craft CMS 4.
+Checkit 1.x requires Craft CMS 4.x
+Checkit 2.x requires Craft CMS 5.x
 
 ## Plugin Video Guide
 
