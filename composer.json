@@ -10,7 +10,7 @@
 	  }
 	],
 	"require": {
-		"craftcms/cms": "^5.0.0-alpha.5"
+		"craftcms/cms": "^5.0.0-beta"
 	},
 	"support": {
 		"issues": "https://github.com/abm-werbeagentur/craft-checkit/issues",
