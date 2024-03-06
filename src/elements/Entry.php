@@ -193,7 +193,7 @@ class Entry extends CraftEntry
         ];
 
         // Hide Author & Last Edited By from Craft Solo
-        if (Craft::$app->getEdition() !== \craft\enums\CmsEdition::Pro) {
+        if (Craft::$app->edition !== \craft\enums\CmsEdition::Pro) {
             unset($attributes['author'], $attributes['revisionCreator']);
         }
 
