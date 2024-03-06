@@ -79,7 +79,7 @@ class CheckIt extends Plugin {
 
         if (Craft::$app->getRequest()->getIsCpRequest()) {
 
-            if (Craft::$app->getEdition() === Craft::Pro) {
+            if (Craft::$app->getEdition() === \craft\enums\CmsEdition::Pro) {
                 $this->_registerPermissions();
             }
             $this->_registerCpRoutes();
