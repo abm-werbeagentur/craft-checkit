@@ -280,6 +280,9 @@ class Sidebar extends Component
 	private function _renderEntrySidebarPanel($template, $template_vars = []): ?string
 	{
 		Craft::$app->getView()->registerAssetBundle(CPAssets::class);
+		Craft::$app->getView()->registerTranslations("abm-checkit",[
+			"Indicate for all sites",
+		]);
 
         return Craft::$app->getView()->renderTemplate('abm-checkit/_sidebar/' . $template, array_merge($template_vars));
 	}
