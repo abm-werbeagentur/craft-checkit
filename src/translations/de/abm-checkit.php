@@ -16,5 +16,6 @@ return [
 	'Use the toggle switch below to indicate that an action is required for the respective site/language.' => 'Verwende den unten angezeigten Umschalter, um für die jeweilige Seite/Sprache anzuzeigen, dass eine Aktion notwendig ist.',
 	'Green = action required / pending' => 'Grün = es ist eine Aktion erforderlich / Bearbeitung offen',
 	'Gray = no action required / the task has been completed' => 'Grau = es ist keine Aktion erforderlich / die Aufgabe wurde abgeschlossen',
+	'Indicate for all sites' => 'Markiere für alle Sprachen',
 ];
 ?>
