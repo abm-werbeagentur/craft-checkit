@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.2 - 2024-04-25
+
+### Added
+- Added "Indicate for all sites" Lightswitch
+
 ## 2.0.1 - 2024-03-06
 
 ### Changes
