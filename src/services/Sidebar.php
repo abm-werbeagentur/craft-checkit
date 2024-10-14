@@ -52,7 +52,7 @@ class Sidebar extends Component
 				if($currentSection->getHasMultiSiteEntries()) {
 					if($currentSection->propagationMethod == PropagationMethod::SiteGroup) {
 						$sites = Craft::$app->getSites()->getSitesByGroupId($currentSite->group->id);
-						
+
 					} elseif($currentSection->propagationMethod == PropagationMethod::Language) {
 						$testsites = Craft::$app->getSites()->getEditableSites();
 						$sites = [];
@@ -73,7 +73,7 @@ class Sidebar extends Component
 				}
 
 				foreach($sites as $site) {
-				
+
 					foreach($siteSettings as $siteSetting) {
 
 						$setting_site_id = null;
@@ -130,16 +130,21 @@ class Sidebar extends Component
 				$event->html .= $this->_renderEntrySidebarPanel('sidebar',$template_vars);
 			}
 		}
+
 		return;
     }
 
-	public function hookCommerceProductEditDetails(array &$context): ?string
+	public function renderProductSidebar(DefineHtmlEvent $event): void
 	{
 		if(!class_exists(CommercePlugin::class)) {
-			return "";
+			return;
 		}
 
-		if(Plugin::$plugin->getSections()->isInSectionEnabled("productTypes",$context["productType"]->id)) {
+		$productTypeId = $event->sender->typeId;
+		$productId = $event->sender->id;
+		$siteId = $event->sender->siteId;
+
+		if(Plugin::$plugin->getSections()->isInSectionEnabled("productTypes",$productTypeId)) {
 			$currentUser = Craft::$app->getUser();
 			$template_vars = ["checkitSites" => []];
 
@@ -147,7 +152,7 @@ class Sidebar extends Component
 
 			foreach($sites as $site) {
 
-				foreach(CommercePlugin::getInstance()->getProductTypes()->getProductTypeSites($context["productType"]->id) as $siteSetting) {
+				foreach(CommercePlugin::getInstance()->getProductTypes()->getProductTypeSites($productTypeId) as $siteSetting) {
 
 					if(!$siteSetting->hasUrls) {
 						continue;
@@ -156,8 +161,8 @@ class Sidebar extends Component
 					$setting_site_id = null;
 
 					try {
-
 						$setting_site_id = $siteSetting->site->id;
+
 					} catch(InvalidConfigException $e) {
 						continue;
 					}
@@ -169,7 +174,7 @@ class Sidebar extends Component
 					$template_site = [
 						"id" => $siteSetting->site->id,
 						"name" => $siteSetting->site->name,
-						"status" => Plugin::$plugin->getEntries()->getEntryCheckitStatus("productTypes",$context["productId"],$siteSetting->site->id),
+						"status" => Plugin::$plugin->getEntries()->getEntryCheckitStatus("productTypes",$productId,$siteSetting->site->id),
 					];
 
 					$template_vars["checkitSites"][] = $template_site;
@@ -185,7 +190,7 @@ class Sidebar extends Component
 				$template_vars["showInformations"] = $settings["showInformations"];
 
 				foreach($template_vars["checkitSites"] as $template_site) {
-					if($context["product"]->siteId == $template_site["id"] && $template_site["status"]) {
+					if($siteId == $template_site["id"] && $template_site["status"]) {
 						$template_vars["showIsMarkedInformation"] = 1;
 					}
 				}
@@ -200,16 +205,15 @@ class Sidebar extends Component
 				}
 			}
 
-			return $this->_renderEntrySidebarPanel('sidebar',$template_vars);
+			$event->html .= $this->_renderEntrySidebarPanel('sidebar',$template_vars);
 		}
-
-		return "";
 	}
 
 	public function onAfterSaveElement(ElementEvent $event): void
     {
+
 		if (!(
-			$event->element instanceof Entry || 
+			$event->element instanceof Entry ||
 			(class_exists(CommerceProduct::class) && $event->element instanceof CommerceProduct)
 		)) {
             return;
@@ -228,12 +232,18 @@ class Sidebar extends Component
 			return;
 		}
 
+		$isCommerceProduct = false;
+		if((class_exists(CommerceProduct::class) && $event->element instanceof CommerceProduct))
+		{
+			$isCommerceProduct = true;
+		}
+
 		// This helps us maintain whether the after-save event has already been triggered for this
 		// request, and not to have it run again. This is most commonly caused by Preparse fields
 		// which re-save the element again, straight after it's first save. Then we end up with multiple
 		// submissions, created each time it's called.
 		$this->afterSaveRun = true;
-			
+
 		if(in_array($action,[
 			"elements/save",
 			"elements/apply-draft"
@@ -241,7 +251,7 @@ class Sidebar extends Component
 			$checkitStatus = $request->getBodyParam('checkitStatus');
 
 			if(!empty($checkitStatus) && is_array($checkitStatus) && isset($checkitStatus["sites"])) {
-				
+
 				foreach($checkitStatus["sites"] as $siteid => $changes) {
 
 					if($action == "elements/apply-draft") {
@@ -250,33 +260,26 @@ class Sidebar extends Component
 
 					if($changes["old"]!=$changes["new"]) {
 
-						if($changes["new"]) {
-							Plugin::$plugin->getEntries()->addCheckitStatus("sections", $entry->id,$siteid);
+						if($isCommerceProduct) {
+							if($changes["new"]) {
+								Plugin::$plugin->getEntries()->addCheckitStatus("productTypes", $entry->id, $siteid);
+							} else {
+								Plugin::$plugin->getEntries()->deleteCheckitStatus("productTypes", $entry->id, $siteid);
+							}
+
 						} else {
-							Plugin::$plugin->getEntries()->deleteCheckitStatus("sections", $entry->id,$siteid);
-						}
-					}
-				}
-			}
-		} elseif($action == "commerce/products/save-product") {
-			$checkitStatus = $request->getBodyParam('checkitStatus');
-
-			if(!empty($checkitStatus) && is_array($checkitStatus) && isset($checkitStatus["sites"])) {
-				foreach($checkitStatus["sites"] as $siteid => $changes) {
-
-					if($changes["old"]!=$changes["new"]) {
-
-						if($changes["new"]) {
-							Plugin::$plugin->getEntries()->addCheckitStatus("productTypes", $entry->id, $siteid);
-						} else {
-							Plugin::$plugin->getEntries()->deleteCheckitStatus("productTypes", $entry->id, $siteid);
+							if($changes["new"]) {
+								Plugin::$plugin->getEntries()->addCheckitStatus("sections", $entry->id,$siteid);
+							} else {
+								Plugin::$plugin->getEntries()->deleteCheckitStatus("sections", $entry->id,$siteid);
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	private function _renderEntrySidebarPanel($template, $template_vars = []): ?string
 	{
 		Craft::$app->getView()->registerAssetBundle(CPAssets::class);

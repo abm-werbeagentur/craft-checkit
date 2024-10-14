@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.3 - 2024-10-14
+
+### Changes
+- Craft Commerce 5 Support
+
 ## 2.0.2 - 2024-04-25
 
 ### Added

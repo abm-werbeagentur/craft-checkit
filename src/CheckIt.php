@@ -95,7 +95,7 @@ class CheckIt extends Plugin {
     }
 
     public function getCpNavItem (): ?array
-	{        
+	{
         $item = parent::getCpNavItem();
 
         $item['label'] = Craft::t('abm-checkit', 'Checkit');
@@ -157,9 +157,9 @@ class CheckIt extends Plugin {
         Event::on(Elements::class, Elements::EVENT_INVALIDATE_CACHES, function(InvalidateElementCachesEvent $event) {
 
             $tags = [];
-            
+
             if(!empty($event->tags)) {
-            
+
                 $entryClassname = Entry::class;
                 if(in_array("element::$entryClassname::*",$event->tags)) {
                     $elementType = PluginEntry::class;
@@ -183,19 +183,16 @@ class CheckIt extends Plugin {
         });
 
         if (Craft::$app->getRequest()->getIsCpRequest()) {
-            
+
             $currentUser = Craft::$app->getUser();
-            
+
             if($currentUser) {
                 if($currentUser->checkPermission('abm-checkit-save-status')) {
                     Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, [$this->getSidebar(), 'onAfterSaveElement']);
                     Event::on(Entry::class, Entry::EVENT_DEFINE_SIDEBAR_HTML, [$this->getSidebar(), 'renderEntrySidebar']);
 
                     if ($this->commerceInstalled) {
-
-                        Craft::$app->view->hook('cp.commerce.product.edit.details', function(array &$context) {
-                            return $this->getSidebar()->hookCommerceProductEditDetails($context);
-                        });
+                        Event::on(Product::class, Product::EVENT_DEFINE_SIDEBAR_HTML, [$this->getSidebar(), 'renderProductSidebar']);
                     }
                 }
             }
@@ -217,11 +214,11 @@ class CheckIt extends Plugin {
     private function _registerCpRoutes (): void
 	{
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event): void {
-            
+
             $event->rules['abm-checkit'] = 'abm-checkit/overview/index';
 
             $event->rules['abm-checkit/overview'] = 'abm-checkit/overview/index';
-            
+
             $event->rules['abm-checkit/entries'] = 'abm-checkit/entries/index';
             $event->rules['abm-checkit/products'] = 'abm-checkit/products/index';
 
