@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.4 - 2025-10-
+
+### Changes
+- Fixed Site-Switcher in elementIndex
+- Refactor element queries
+
 ## 2.0.3 - 2024-10-14
 
 ### Changes

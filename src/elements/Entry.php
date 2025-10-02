@@ -9,11 +9,12 @@ namespace abmat\checkit\elements;
 use Craft;
 use craft\base\Element;
 use craft\elements\Entry as CraftEntry;
+use craft\elements\db\ElementQueryInterface;
 use craft\helpers\StringHelper;
 use craft\models\Section;
 
 use abmat\checkit\CheckIt;
-use abmat\checkit\elements\db\EntryQuery;
+use abmat\checkit\elements\db\EntryQuery as EntryQueryCheckit;
 use abmat\checkit\elements\actions\Checked;
 
 class Entry extends CraftEntry
@@ -67,7 +68,7 @@ class Entry extends CraftEntry
 		$sections = Craft::$app->getEntries()->getEditableSections();
 
 		$enabledSections = CheckIt::$plugin->getSections()->getAllEnabledSections();
-		
+
         foreach ($sections as $section) {
 
 			if(!array_key_exists($section->id,$enabledSections)) {
@@ -117,7 +118,7 @@ class Entry extends CraftEntry
 		foreach ($sectionTypes as $type => $heading) {
 
             if (!empty($sectionsByType[$type])) {
-               
+
 				foreach ($sectionsByType[$type] as $section) {
                     /** @var Section $section */
                     $source = [
@@ -210,11 +211,11 @@ class Entry extends CraftEntry
 
 	/**
      * @inheritdoc
-     * @return EntryQuery The newly created [[EntryQuery]] instance.
+     * @return EntryQueryCheckit The newly created [[EntryQuery]] instance.
      */
-    public static function find(): EntryQuery
+    public static function find(): EntryQueryCheckit
     {
-       return new EntryQuery(static::class);
+       return new EntryQueryCheckit(static::class);
     }
 
     /**
@@ -225,13 +226,25 @@ class Entry extends CraftEntry
         return static::defineActions($context);
     }
 
+    protected function cacheTags(): array
+    {
+        return [
+            "entryCheckIt:$this->typeId",
+        ];
+    }
+
+    public static function indexElementCount(ElementQueryInterface $elementQuery, ?string $sourceKey): int
+    {
+        return count($elementQuery->createCommand()->queryAll());
+    }
+
     /**
      * @inheritdoc
      */
     protected static function defineActions(string $source): array
     {
         $currentUser = Craft::$app->getUser();
-            
+
         if($currentUser) {
             if($currentUser->checkPermission('abm-checkit-save-status')) {
                 return [

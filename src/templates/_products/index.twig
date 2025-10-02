@@ -1,4 +1,4 @@
-{% extends "_layouts/cp" %}
+{% extends "_layouts/elementindex" %}
 {% set elementType = 'abmat\\checkit\\elements\\Product' %}
 {% set elementInstance = craft.app.elements.createElement(elementType) %}
 {% set selectedSubnavItem = 'abm-checkit-products' %}
@@ -16,13 +16,6 @@
 {% if showSiteMenu == 'auto' %}
     {% set showSiteMenu = elementInstance.isLocalized() %}
 {% endif %}
-
-{% block contextMenu %}
-    {% if showSiteMenu %}
-        {% include "_elements/sitemenu" %}
-    {% endif %}
-{% endblock %}
-
 
 {% block sidebar %}
     {% if sources is not empty %}
@@ -68,6 +61,8 @@
         defaultSource: {{ (defaultSource ?? null)|json_encode|raw }},
         defaultSourcePath: {{ (defaultSourcePath ?? null)|json_encode|raw }},
         canHaveDrafts: {{ 'false' }},
+        defaultSort: ['title', 'asc'],
+        sortableAttributes: [],
     });
 {% endblock %}
 

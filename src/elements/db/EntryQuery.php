@@ -7,13 +7,31 @@
 namespace abmat\checkit\elements\db;
 
 use craft\elements\db\EntryQuery as CraftEntryQuery;
+use abmat\checkit\records\EntryRecord as CheckItEntryRecord;
 
 class EntryQuery extends CraftEntryQuery {
 
 	protected function beforePrepare(): bool
     {
-		$this->query->innerJoin("abm_checkit_entries",'`abm_checkit_entries`.`groupType`="sections" and `abm_checkit_entries`.`siteId`=`elements_sites`.`siteId` and `abm_checkit_entries`.`entryId`=`elements`.`id`');
-		
+		$this->query->innerJoin(
+			["abm_checkit_entries" => CheckItEntryRecord::tableName()],
+			'[[abm_checkit_entries.groupType]]="sections" and
+			[[abm_checkit_entries.siteId]]=[[elements_sites.siteId]] and
+			[[abm_checkit_entries.entryId]]=[[elements.id]]');
+
 		return parent::beforePrepare();
 	}
+
+	protected function cacheTags(): array
+    {
+        $tags = [];
+
+        if ($this->typeId) {
+            foreach ($this->typeId as $typeId) {
+                $tags[] = "entryCheckIt:$typeId";
+            }
+        }
+
+        return $tags;
+    }
 }
