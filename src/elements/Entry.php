@@ -233,11 +233,6 @@ class Entry extends CraftEntry
         ];
     }
 
-    public static function indexElementCount(ElementQueryInterface $elementQuery, ?string $sourceKey): int
-    {
-        return count($elementQuery->createCommand()->queryAll());
-    }
-
     /**
      * @inheritdoc
      */

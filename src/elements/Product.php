@@ -41,11 +41,6 @@ class Product extends CommerceProduct {
         ];
     }
 
-    public static function indexElementCount(ElementQueryInterface $elementQuery, ?string $sourceKey): int
-    {
-        return count($elementQuery->createCommand()->queryAll());
-    }
-
     protected static function defineSources(string $context = null): array
     {
         $productTypes = \craft\commerce\Plugin::getInstance()->getProductTypes()->getEditableProductTypes();
