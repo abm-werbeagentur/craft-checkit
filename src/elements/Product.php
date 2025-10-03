@@ -9,11 +9,14 @@ namespace abmat\checkit\elements;
 use Craft;
 use craft\base\Element;
 use craft\commerce\elements\Product as CommerceProduct;
+use craft\elements\db\ElementQueryInterface;
 use craft\helpers\StringHelper;
 use craft\models\Section;
 
+use yii\db\Expression;
+
 use abmat\checkit\CheckIt;
-use abmat\checkit\elements\db\ProductQuery;
+use abmat\checkit\elements\db\ProductQuery as ProductQueryCheckit;
 use abmat\checkit\elements\actions\Checked;
 
 class Product extends CommerceProduct {
@@ -26,9 +29,16 @@ class Product extends CommerceProduct {
         return false;
     }
 
-	public static function find(): ProductQuery
+	public static function find(): ProductQueryCheckit
     {
-        return new ProductQuery(static::class);
+        return new ProductQueryCheckit(static::class);
+    }
+
+    protected function cacheTags(): array
+    {
+        return [
+            "productTypeCheckIt:$this->typeId",
+        ];
     }
 
     protected static function defineSources(string $context = null): array
@@ -55,7 +65,7 @@ class Product extends CommerceProduct {
                     'typeId' => $productTypeIds,
                     'editable' => true,
                 ],
-                'defaultSort' => ['postDate', 'desc'],
+                'defaultSort' => ['title', 'asc'],
             ],
         ];
 
@@ -77,10 +87,21 @@ class Product extends CommerceProduct {
                     'typeId' => $productType->id,
                     'editable' => true
                 ],
+                'defaultSort' => ['title', 'asc'],
             ];
         }
 
         return $sources;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineSortOptions(): array
+    {
+        return [
+            'title' => Craft::t('commerce', 'Title'),
+        ];
     }
 
     /**
@@ -97,7 +118,7 @@ class Product extends CommerceProduct {
     protected static function defineActions(string $source = null): array
     {
         $currentUser = Craft::$app->getUser();
-            
+
         if($currentUser) {
             if($currentUser->checkPermission('abm-checkit-save-status')) {
                 return [
