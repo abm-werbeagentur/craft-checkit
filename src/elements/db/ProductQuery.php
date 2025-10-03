@@ -13,14 +13,19 @@ use abmat\checkit\records\EntryRecord as CheckItEntryRecord;
 class ProductQuery extends CommerceProductQuery {
 
 	protected function afterPrepare(): bool
-    {
-		parent::afterPrepare();
+	{
+		$result = parent::afterPrepare();
 
 		$this->subQuery->innerJoin(
 			["abm_checkit_entries" => CheckItEntryRecord::tableName()],
 			'[[abm_checkit_entries.groupType]]="productTypes" and
 			[[abm_checkit_entries.siteId]]=[[elements_sites.siteId]] and
 			[[abm_checkit_entries.entryId]]=[[commerce_products.id]]');
+
+		return $result;
+	}
+					$joinCondition
+				);
 
 		return true;
 	}

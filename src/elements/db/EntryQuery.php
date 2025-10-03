@@ -11,18 +11,23 @@ use abmat\checkit\records\EntryRecord as CheckItEntryRecord;
 
 class EntryQuery extends CraftEntryQuery {
 
-	protected function afterPrepare(): bool
+    protected function afterPrepare(): bool
     {
-        parent::afterPrepare();
+        $result = parent::afterPrepare();
 
-		$this->subQuery->innerJoin(
-			["abm_checkit_entries" => CheckItEntryRecord::tableName()],
-			'[[abm_checkit_entries.groupType]]="sections" and
-			[[abm_checkit_entries.siteId]]=[[elements_sites.siteId]] and
-			[[abm_checkit_entries.entryId]]=[[elements.id]]');
+        $condition = <<<SQL
+        [[abm_checkit_entries.groupType]]="sections" and
+        [[abm_checkit_entries.siteId]]=[[elements_sites.siteId]] and
+        [[abm_checkit_entries.entryId]]=[[elements.id]]
+        SQL;
 
-		return true;
-	}
+        $this->subQuery->innerJoin(
+            ["abm_checkit_entries" => CheckItEntryRecord::tableName()],
+            $condition
+        );
+
+        return $result;
+    }
 
 	protected function cacheTags(): array
     {
