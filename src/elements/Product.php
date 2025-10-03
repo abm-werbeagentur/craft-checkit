@@ -70,7 +70,7 @@ class Product extends CommerceProduct {
                     'typeId' => $productTypeIds,
                     'editable' => true,
                 ],
-                'defaultSort' => ['elements_sites.title', 'asc'],
+                'defaultSort' => ['title', 'asc'],
             ],
         ];
 
@@ -92,11 +92,21 @@ class Product extends CommerceProduct {
                     'typeId' => $productType->id,
                     'editable' => true
                 ],
-                'defaultSort' => ['elements_sites.title', 'asc'],
+                'defaultSort' => ['title', 'asc'],
             ];
         }
 
         return $sources;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected static function defineSortOptions(): array
+    {
+        return [
+            'title' => Craft::t('commerce', 'Title'),
+        ];
     }
 
     /**
