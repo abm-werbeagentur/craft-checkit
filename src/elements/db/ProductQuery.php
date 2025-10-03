@@ -16,16 +16,16 @@ class ProductQuery extends CommerceProductQuery {
 	{
 		$result = parent::afterPrepare();
 
-		$this->subQuery->innerJoin(
-			["abm_checkit_entries" => CheckItEntryRecord::tableName()],
-			'[[abm_checkit_entries.groupType]]="productTypes" and
-			[[abm_checkit_entries.siteId]]=[[elements_sites.siteId]] and
-			[[abm_checkit_entries.entryId]]=[[commerce_products.id]]');
+		$condition = <<<SQL
+        [[abm_checkit_entries.groupType]]="productTypes" and
+        [[abm_checkit_entries.siteId]]=[[elements_sites.siteId]] and
+        [[abm_checkit_entries.entryId]]=[[commerce_products.id]]
+        SQL;
 
-		return $result;
-	}
-					$joinCondition
-				);
+		$this->subQuery->innerJoin(
+            ["abm_checkit_entries" => CheckItEntryRecord::tableName()],
+            $condition
+        );
 
 		return true;
 	}
