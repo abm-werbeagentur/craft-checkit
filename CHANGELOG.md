@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 2.0.4 - 2025-10-
+## 2.0.4 - 2025-10-03
 
 ### Changes
 - Fixed Site-Switcher in elementIndex
