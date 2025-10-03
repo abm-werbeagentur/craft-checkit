@@ -12,11 +12,11 @@ use abmat\checkit\records\EntryRecord as CheckItEntryRecord;
 
 class ProductQuery extends CommerceProductQuery {
 
-	protected function beforePrepare(): bool
+	protected function afterPrepare(): bool
     {
-		parent::beforePrepare();
+		parent::afterPrepare();
 
-		$this->query->innerJoin(
+		$this->subQuery->innerJoin(
 			["abm_checkit_entries" => CheckItEntryRecord::tableName()],
 			'[[abm_checkit_entries.groupType]]="productTypes" and
 			[[abm_checkit_entries.siteId]]=[[elements_sites.siteId]] and
