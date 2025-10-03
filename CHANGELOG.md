@@ -2,11 +2,6 @@
 
 All notable changes to this project will be documented in this file.
 
-## 2.0.4.1 - 2025-10-03
-
-### Changes
-- fixed afterPrepare Query
-
 ## 2.0.4 - 2025-10-03
 
 ### Changes
