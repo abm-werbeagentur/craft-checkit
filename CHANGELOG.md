@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.5 - 2026-11-12
+- Modify the product query to only include visible product types in Products
+- Resolve Deprecation Warnings
+
 ## 2.0.4 - 2025-10-03
 
 ### Changes
