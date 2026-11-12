@@ -203,12 +203,27 @@ class Entries extends Component
 	}
 
 	public function countElementsForProductTypeSite($productTypeId, $siteId) {
+        return (int) (new Query())
+            ->from(['p' => '{{%commerce_products}}'])
+            ->innerJoin(['e' => '{{%elements}}'], '[[e.id]] = [[p.id]]')
+            ->innerJoin(['es' => '{{%elements_sites}}'], '[[es.elementId]] = [[e.id]] AND [[es.siteId]] = :siteId', [':siteId' => $siteId])
+            ->where([
+                'p.typeId' => $productTypeId,
+                'e.canonicalId' => null,
+                'e.draftId' => null,
+                'e.revisionId' => null,
+                'e.archived' => false,
+                'e.dateDeleted' => null,
+            ])
+            ->count();
+        /*
 		$query = (new Query())->select('count(*) as counter')
 			->from('{{%commerce_products}}')
 			->where([
 				'typeId' => $productTypeId,
 			]);
 		return $query->one()["counter"];
+        */
 	}
 
 	public function countOutstandingForProductTypeSite($productTypeId, $siteId) {
@@ -360,7 +375,7 @@ class Entries extends Component
 		}
 
 		if(Plugin::$plugin->commerceInstalled && class_exists(CommercePlugin::class)) {
-			$editableProductTypes = CommercePlugin::getInstance()->getProductTypes()->getEditableProductTypes();
+			$editableProductTypes = CommercePlugin::getInstance()->getProductTypes()->getViewableProductTypes();
 
 			if(!empty($editableProductTypes)) {
 				$enabledProductTypes = Plugin::$plugin->getSections()->getAllEnabledProductTypes();

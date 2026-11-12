@@ -43,7 +43,7 @@ class Product extends CommerceProduct {
 
     protected static function defineSources(string $context = null): array
     {
-        $productTypes = \craft\commerce\Plugin::getInstance()->getProductTypes()->getEditableProductTypes();
+        $productTypes = \craft\commerce\Plugin::getInstance()->getProductTypes()->getViewableProductTypes();
 
 		$enabledProductTypes = CheckIt::$plugin->getSections()->getAllEnabledProductTypes();
 
